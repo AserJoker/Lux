@@ -20,6 +20,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt)
 find_package(sdl2-image CONFIG REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2_image)
 
+find_package(cJSON CONFIG REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE cjson)
 
 find_package(Duktape CONFIG REQUIRED)
 

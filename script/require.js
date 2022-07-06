@@ -1,6 +1,10 @@
+var _runtime = runtime;
 function resolve(root, reactive) {
   root = root.replace(/\\/g, "/");
   reactive = reactive.replace(/\\/g, "/");
+  if (reactive[0]==='/') {
+    return reactive;
+  }
   const rootPath = root.split("/");
   const reactivePath = reactive.split("/");
   reactivePath.forEach(function (p) {
@@ -19,28 +23,28 @@ function require(name) {
   var result;
   var absolute = resolve(__dirname, name);
   var current = module;
-  if (native.exists(absolute)) {
+  if (_runtime.exists(absolute)) {
     if (require.cache[absolute]) {
       return require.cache[absolute];
     }
-    result = native.load(absolute);
-  } else if (native.exists(absolute + ".js")) {
+    result = _runtime.load(absolute);
+  } else if (_runtime.exists(absolute + ".js")) {
     absolute += ".js";
     if (require.cache[absolute]) {
       return require.cache[absolute];
     }
-    result = native.load(absolute);
-  } else if (native.exists(resolve(absolute, "index.js"))) {
+    result = _runtime.load(absolute);
+  } else if (_runtime.exists(resolve(absolute, "index.js"))) {
     absolute = resolve(absolute, "index.js");
     if (require.cache[absolute]) {
       return require.cache[absolute];
     }
-    result = native.load(absolute);
+    result = _runtime.load(absolute);
   } else {
     if (require.cache[name]) {
       return require.cache[name];
     } else {
-      result = native.loadModule(name);
+      result = _runtime.loadModule(name);
       absolute = name;
     }
   }

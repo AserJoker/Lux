@@ -1,7 +1,10 @@
-declare const native: {
-    println: (msg: string) => void;
-    loadModule: (path: string) => any;
-    load: (path: string) => any;
-    exists: (path: string) => boolean;
+declare const native:{
+    setTitle:(title:string)=>void;
+    getTitle:()=>string;
+    setSize:(width:number,height:number)=>void;
+    getSize:()=>[number,number];
+    setFullscreen:(flag:0|1|2)=>void;
 }
-declare const require: (path: string) => any;
+declare const resource:{
+    asset:(token:string)=>ArrayBuffer|undefined;
+}

@@ -11,18 +11,24 @@
 #include "system/Script.hpp"
 
 #include "resource/Image.hpp"
+#include "resource/Buffer.hpp"
 using namespace lux;
 int main(int argc, char* argv[]) {
     try {
         core::Container::provide<resource::Image>(resource::Image::TOKEN, core::Container::PROTOTYPE);
+        core::Container::provide<resource::Buffer>(resource::Buffer::TOKEN, core::Container::PROTOTYPE);
 
         PROVIDE(system::Application);
 
-        PROVIDE_AND_INJECT(system::Native);
-        PROVIDE_AND_INJECT(system::Graphic);
-        PROVIDE_AND_INJECT(system::Resource);
-        PROVIDE_AND_INJECT(system::Script);
+        PROVIDE(system::Script);
+        PROVIDE(system::Native);
+        PROVIDE(system::Graphic);
+        PROVIDE(system::Resource);
 
+        INJECT(system::Script);
+        INJECT(system::Native);
+        INJECT(system::Graphic);
+        INJECT(system::Resource);
         auto app = INJECT(system::Application);
         app->run();
         return 0;

@@ -2,15 +2,21 @@
 #define _H_LUX_SYSTEM_SCRIPT_
 #include "Application.hpp"
 #include "script/Engine.hpp"
-#define ADD_FUNC(obj,name) script::Function name;\
-	name.setValue(Script::name);\
+#define _ADD_FUNC(obj,name,host) script::Function name;\
+	name.setValue(host::name);\
 	obj.setField(#name,&name);
+#define ADD_FUNC(obj,name) _ADD_FUNC(obj,name,Script)
+
+#define CHECK_ARG_LEN(len,msg) {auto length = duk_get_top(ctx);if(length!=len){duk_reference_error(ctx,msg);}}
+#define CHECK_ARG_NUMBER(index,msg) {if(!duk_is_number(ctx,index)){duk_type_error(ctx,msg);}}
+#define CHECK_ARG_STRING(index,msg) {if(!duk_is_string(ctx,index)){duk_type_error(ctx,msg);}}
 namespace lux::system {
 	class Script :public core::EventEmitter {
 	private:
 		static duk_idx_t println(duk_context* ctx) {
 			auto msg = duk_get_string(ctx, 0);
-			std::cout << msg << std::endl;
+			std::string str(msg);
+			std::cout<<str;
 			return 0;
 		}
 		static duk_idx_t exists(duk_context* ctx) {
@@ -21,14 +27,7 @@ namespace lux::system {
 		}
 		static duk_idx_t loadModule(duk_context* ctx) {
 			std::string name = duk_get_string(ctx, 0);
-			auto script = INJECT(Script);
-			if (name == "system") {
-				script::Object system;
-				script->_engine.pushValue(&system);
-			}
-			else {
-				duk_push_undefined(ctx);
-			}
+			duk_push_undefined(ctx);
 			return 1;
 		}
 		static duk_idx_t load(duk_context* ctx) {
@@ -49,6 +48,7 @@ namespace lux::system {
 					source += c;
 				}
 			}
+			file.close();
 			script::String __dirname;
 			script::String __filename;
 			auto fullpath = std::filesystem::absolute(path);
@@ -66,16 +66,14 @@ namespace lux::system {
 			return 1;
 		}
 
+		static duk_idx_t exit(duk_context *ctx){
+			auto app = INJECT(Application);
+			app->exit();
+			return 0;
+		}
+
 		script::Engine _engine;
-		core::Pointer<resource::Image> _pImage;
 		void onReady() {
-			//_pImage = resource::Image::create(100, 100, SDL_TEXTUREACCESS_STATIC);
-			script::Object native;
-			ADD_FUNC(native, println);
-			ADD_FUNC(native, exists);
-			ADD_FUNC(native, loadModule);
-			ADD_FUNC(native, load);
-			_engine.setValue("native", &native);
 			script::String __dirname;
 			script::String __filename;
 			auto fullpath = std::filesystem::absolute("script/main.js");
@@ -83,7 +81,6 @@ namespace lux::system {
 			__filename.setValue(fullpath.filename().string());
 			_engine.setValue("__dirname", &__dirname);
 			_engine.setValue("__filename", &__filename);
-			_engine.execFile("script/require.js");
 			_engine.execFile("script/main.js");
 		}
 	protected:
@@ -96,12 +93,25 @@ namespace lux::system {
 		DEFINE_TOKEN(lux::system::Script);
 		Script() {
 			auto app = INJECT(Application);
-			auto graphic = INJECT(Graphic);
 			app->addEventListener(Application::EVENT_READY, this);
+			script::Object runtime;
+			ADD_FUNC(runtime, exists);
+			ADD_FUNC(runtime, loadModule);
+			ADD_FUNC(runtime, load);
+			_engine.setValue("runtime", &runtime);
+			_engine.execFile("script/require.js");
+			_engine.setValue("runtime",script::Undefined::singleton());
+			script::Function println;
+			println.setValue(Script::println);
+			_engine.setValue("println",&println);
+			script::Function exit;
+			exit.setValue(Script::exit);
+			_engine.setValue("exit",&exit);
 		}
-		script::Engine& getEngine(){
-			return _engine;
+		script::Engine* getEngine(){
+			return &_engine;
 		}
 	};
 }
+#undef ADD_FUNC
 #endif _H_LUX_SYSTEM_SCRIPT_
