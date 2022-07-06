@@ -23,9 +23,9 @@ namespace lux::script {
 		}
 		void pushArray(Array* value) {
 			auto length = value->getLength();
-			auto array = duk_get_top(_pCtx);
+			duk_uarridx_t array = duk_get_top(_pCtx);
 			duk_push_array(_pCtx);
-			for (size_t i = 0;i < length;i++) {
+			for (duk_idx_t i = 0;i < length;i++) {
 				pushValue(value->get(i));
 				duk_put_prop_index(_pCtx, array, i);
 			}

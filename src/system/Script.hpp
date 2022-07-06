@@ -7,67 +7,6 @@
 #define ADD_FUNC(obj,name) script::Function name;\
 	name.setValue(Script::name);\
 	obj.setField(#name,&name);
-const char* requireJS = "function resolve(root, reactive) {\n"
-"root = root.replace(/\\\\/g, '/');\n"
-"reactive = reactive.replace(/\\\\/g, '/');\n"
-"const rootPath = root.split('/');\n"
-"const reactivePath = reactive.split('/');\n"
-"reactivePath.forEach(function(p) {\n"
-"	if (p === '.') {\n"
-"		return;\n"
-"	}\n"
-"	if (p === '..') {\n"
-"		rootPath.length--;\n"
-"		return;\n"
-"	}\n"
-"	rootPath.push(p);\n"
-"})\n"
-"return rootPath.join('/');\n"
-"}\n"
-"function require(name) {\n"
-"	var result;\n"
-"	var absolute = resolve(__dirname, name);\n"
-"	var current = module;\n"
-"	if (native.exists(absolute)) {\n"
-"		if (require.cache[absolute]) {\n"
-"			return require.cache[absolute];\n"
-"		}\n"
-"		result = native.load(absolute);\n"
-"	}\n"
-"	else if (native.exists(absolute + \".js\")) {\n"
-"		absolute += \".js\";\n"
-"		if (require.cache[absolute]) {\n"
-"			return require.cache[absolute];\n"
-"		}\n"
-"		result = native.load(absolute);\n"
-"	}\n"
-"	else if (native.exists(resolve(absolute, \"index.js\"))) {\n"
-"		absolute = resolve(absolute, \"index.js\");\n"
-"		if (require.cache[absolute]) {\n"
-"			return require.cache[absolute];\n"
-"		}\n"
-"		result = native.load(absolute);\n"
-"	}\n"
-"	else {\n"
-"		if (require.cache[name]) {\n"
-"			return require.cache[name];\n"
-"		}\n"
-"		else {\n"
-"			result = native.loadModule(name);\n"
-"			absolute = name;\n"
-"		}\n"
-"	}\n"
-"	if (result === undefined) {\n"
-"		throw new ReferenceError(\"cannot load module:\" + name);\n"
-"	}\n"
-"	require.cache[absolute] = result;\n"
-"	module = current;\n"
-"	exports = module.exports;\n"
-"	return result;\n"
-"}\n"
-"require.cache = {};\n"
-"module={exports:{}};\n"
-"exports=module.exports;\n";
 namespace lux::system {
 	class Script :public core::EventEmitter {
 	private:
@@ -146,21 +85,13 @@ namespace lux::system {
 			__filename.setValue(fullpath.filename().string());
 			_engine.setValue("__dirname", &__dirname);
 			_engine.setValue("__filename", &__filename);
-			_engine.execFile("require.js", requireJS);
+			_engine.execFile("script/require.js");
 			_engine.execFile("script/main.js");
-		}
-		void onLoop() {
-			// SDL_Rect source = {0,0,100,100};
-			// SDL_Rect target = {100,100,100,100};
-			// _pImage->draw(&source, &target);
 		}
 	protected:
 		void on(core::EventEmitter* emitter, const std::string& event) {
 			if (event == Application::EVENT_READY) {
 				onReady();
-			}
-			else if (event == Graphic::EVENT_LOOP) {
-				onLoop();
 			}
 		}
 	public:
@@ -169,7 +100,9 @@ namespace lux::system {
 			auto app = INJECT(Application);
 			auto graphic = INJECT(Graphic);
 			app->addEventListener(Application::EVENT_READY, this);
-			graphic->addEventListener(Graphic::EVENT_LOOP, this);
+		}
+		script::Engine& getEngine(){
+			return _engine;
 		}
 	};
 }
