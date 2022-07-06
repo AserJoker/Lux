@@ -1,8 +1,6 @@
 #ifndef _H_LUX_SYSTEM_SCRIPT_
 #define _H_LUX_SYSTEM_SCRIPT_
 #include "Application.hpp"
-#include "Graphic.hpp"
-#include "resource/Image.hpp"
 #include "script/Engine.hpp"
 #define ADD_FUNC(obj,name) script::Function name;\
 	name.setValue(Script::name);\
