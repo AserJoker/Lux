@@ -7,7 +7,7 @@
 	obj.setField(#name,&name);
 #define ADD_FUNC(obj,name) _ADD_FUNC(obj,name,Script)
 
-#define CHECK_ARG_LEN(len,msg) {auto length = duk_get_top(ctx);if(length!=len){duk_reference_error(ctx,msg);}}
+#define CHECK_ARG_LEN(len,msg) {auto length = duk_get_top(ctx);if(length<len){duk_reference_error(ctx,msg);}}
 #define CHECK_ARG_NUMBER(index,msg) {if(!duk_is_number(ctx,index)){duk_type_error(ctx,msg);}}
 #define CHECK_ARG_STRING(index,msg) {if(!duk_is_string(ctx,index)){duk_type_error(ctx,msg);}}
 namespace lux::system {
@@ -15,8 +15,8 @@ namespace lux::system {
 	private:
 		static duk_idx_t println(duk_context* ctx) {
 			auto msg = duk_get_string(ctx, 0);
-			std::string str(msg);
-			std::cout<<str;
+			std::cout<<msg;
+			std::cout.flush();
 			return 0;
 		}
 		static duk_idx_t exists(duk_context* ctx) {
