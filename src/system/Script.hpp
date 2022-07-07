@@ -2,6 +2,7 @@
 #define _H_LUX_SYSTEM_SCRIPT_
 #include "Application.hpp"
 #include "Resource.hpp"
+#include "Graphic.hpp"
 #include "resource/Image.hpp"
 #include "script/Engine.hpp"
 #define _ADD_FUNC(obj, name, host) \
@@ -197,6 +198,9 @@ namespace lux::system
 			if (event == Application::EVENT_READY)
 			{
 				onReady();
+				script::String event;
+				event.setValue(Application::EVENT_READY);
+				_engine.call("_on_system_event",(script::Value* )&event);
 			}
 		}
 
@@ -229,10 +233,11 @@ namespace lux::system
 			_ADD_FUNC(runtime, load, _Runtime);
 			_engine.setValue("runtime", &runtime);
 
-			_engine.execFile("script/require.js");
+			_engine.execFile("script/base/require.js");
 			_engine.setValue("runtime", script::Undefined::singleton());
 
-			_engine.execFile("script/console.js");
+			_engine.execFile("script/runtime/console.js");
+			_engine.execFile("script/runtime/event.js");
 		}
 		script::Engine *getEngine()
 		{

@@ -57,6 +57,11 @@ namespace lux::script {
 				return;
 			}
 		}
+		template<class T,class ...Args>
+		void pushValue(T value,Args... values){
+			pushValue(value);
+			pushValue(values...);
+		}
 		void error() {
 			auto msg = duk_safe_to_stacktrace(_pCtx, -1);
 			throw RUNTIME_ERROR(msg);
@@ -100,6 +105,16 @@ namespace lux::script {
 			if (duk_pcall(_pCtx, 0)) {
 				error();
 			}
+		}
+		template<class ...Args>
+		void call(const std::string& name,Args... args){
+			auto top = duk_get_top(_pCtx);
+			duk_get_global_string(_pCtx,name.c_str());
+			pushValue(args...);
+			if(duk_pcall(_pCtx,sizeof...(args))){
+				error();
+			}
+			duk_set_top(_pCtx,top);
 		}
 		void setValue(const std::string& name, Value* value) {
 			pushValue(value);
