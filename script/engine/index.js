@@ -7,9 +7,7 @@ var start = function () {
         image = createImage("texture::demo");
     });
     _system_event_bus.listen("lux::system::Graphic.loop", function () {
-        if (image) {
-            drawImage(image, 100, 100, 0, 0, 32, 32);
-        }
+        drawImage(image, 100, 100, 0, 0, 32, 32);
     });
 };
 exports.start = start;
