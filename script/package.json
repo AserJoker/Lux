@@ -1,0 +1,10 @@
+{
+  "name": "lux",
+  "version": "0.1.0",
+  "description": "",
+  "scripts": {
+    "build":"tsc"
+  },
+  "author": "",
+  "license": "ISC"
+}

@@ -64,6 +64,10 @@ namespace lux::system
 				duk_push_object(ctx);
 				duk_put_prop_string(ctx, mod, "exports");
 				duk_put_global_string(ctx, "module");
+				mod = duk_get_top(ctx);
+				duk_get_global_string(ctx,"module");
+				duk_get_prop_string(ctx,mod,"exports");
+				duk_put_global_string(ctx,"exports");
 				std::ifstream file;
 				file.open(path);
 				std::string source;
@@ -202,6 +206,10 @@ namespace lux::system
 				script::String event;
 				event.setValue(Application::EVENT_READY);
 				_engine.call("_on_system_event",(script::Value* )&event);
+			}else if(event == Graphic::EVENT_LOOP){
+				script::String event;
+				event.setValue(Graphic::EVENT_LOOP);
+				_engine.call("_on_system_event",(script::Value* )&event);
 			}
 		}
 
@@ -211,6 +219,8 @@ namespace lux::system
 		{
 			auto app = INJECT(Application);
 			app->addEventListener(Application::EVENT_READY, this);
+			auto graphic = INJECT(Graphic);
+			graphic->addEventListener(Graphic::EVENT_LOOP, this);
 
 			script::Function println;
 			println.setValue(Script::println);
