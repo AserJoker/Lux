@@ -79,14 +79,11 @@ namespace lux::script {
 				if (file.is_open()) {
 					file >> std::noskipws;
 					std::string src;
-					while (true) {
+					while (!file.eof()) {
 						char c;
 						file >> c;
-						if (!file.eof()) {
+						if (!file.eof()) { 
 							src += c;
-						}
-						else {
-							break;
 						}
 					}
 					if (src.length() == 0) {

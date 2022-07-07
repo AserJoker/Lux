@@ -16,6 +16,30 @@
 #include "resource/Image.hpp"
 #include "resource/Buffer.hpp"
 using namespace lux;
+
+class Demo:public core::EventEmitter{
+    private:
+    core::Pointer<resource::Image> _pImage;
+    public:
+    DEFINE_TOKEN(Demo);
+    Demo(){
+        auto app = INJECT(system::Application);
+        app->addEventListener(system::Application::EVENT_READY,this);
+        auto graphic = INJECT(system::Graphic);
+        graphic->addEventListener(system::Graphic::EVENT_LOOP,this);
+    }
+    protected:
+    void on(core::EventEmitter* emitter,const std::string& event) override{
+        if(event==system::Application::EVENT_READY){
+            _pImage = resource::Image::create("texture::demo");
+        }
+        else{
+            SDL_Rect rc = {100,100,32,32};
+            SDL_Rect source = {0,0,32,32};
+            _pImage->draw(&source,&rc);
+        }
+    }
+};
 int main(int argc, char* argv[]) {
     #if defined(_WIN32)
     // Set console code page to UTF-8 so console known how to interpret string data
@@ -38,6 +62,7 @@ int main(int argc, char* argv[]) {
         INJECT(system::Native);
         INJECT(system::Graphic);
         INJECT(system::Resource);
+        PROVIDE_AND_INJECT(Demo);
         auto app = INJECT(system::Application);
         app->run();
         return 0;

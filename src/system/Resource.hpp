@@ -45,7 +45,7 @@ namespace lux::system {
 		}
 
 		void onInit() {
-			IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF | IMG_INIT_WEBP);
+			IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF );
 		}
 		void onQuit() {
 			IMG_Quit();

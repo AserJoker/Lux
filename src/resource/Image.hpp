@@ -2,6 +2,7 @@
 #define _H_LUX_RESOURCE_IMAGE_
 #include "core/EventEmitter.hpp"
 #include "system/Graphic.hpp"
+#include "system/Resource.hpp"
 namespace lux::resource {
 	class Image :public core::EventEmitter {
 	private:
@@ -46,6 +47,23 @@ namespace lux::resource {
 				throw RUNTIME_ERROR(SDL_GetError());
 			}
 			return image;
+		}
+
+		static core::Pointer<Image> create(const std::string& token){
+			auto R = INJECT(system::Resource);
+			auto graphic = INJECT(system::Graphic);
+			try{
+				auto image = INJECT(Image);
+				auto buf = R->load(token);
+				image->_pTexture = IMG_LoadTexture_RW(graphic->getRenderer(),SDL_RWFromConstMem(buf->getBufferData(),(int)buf->getBufferSize()),0);
+				if(!image->_pTexture){
+					throw RUNTIME_ERROR(SDL_GetError());
+				}
+				return image;
+			}catch(std::exception& exp){
+				std::cout<<exp.what()<<std::endl;
+				return Image::create(2,2);
+			}
 		}
 	};
 }

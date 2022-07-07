@@ -1,5 +1,8 @@
 {
     "i18n":{
         "zh_CN":"i18n/zh_CN.json"
+    },
+    "texture":{
+        "demo":"texture/demo.png"
     }
 }
