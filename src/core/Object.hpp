@@ -4,6 +4,7 @@
 #include<string>
 #include<fmt/format.h>
 #include<exception>
+#include<map>
 
 #define RUNTIME_ERROR(msg) std::runtime_error(fmt::format("{} :\n\t at {}:{}",msg,__FILE__,__LINE__))
 
@@ -13,27 +14,30 @@ namespace lux::core {
     class Object {
     private:
         unsigned _nRef;
+        unsigned _nId;
         std::string _szType;
+
+        static std::map<unsigned,Object *> _runtime;
+        static unsigned createId(){
+            static unsigned nCounter = 0;
+            return ++nCounter;
+        }
 
         friend class Container;
 
     protected:
-        Object() : _nRef(0) {}
+        Object() : _nRef(0),_nId(Object::createId()) {
+            Object::_runtime[_nId] = this;
+        }
 
     public:
-        std::string& getClassName() {
-            return _szType;
-        }
-
-        virtual std::string toString() {
-            return fmt::format("[object {}]", getClassName());
-        }
 
         template<class T>
         class Pointer {
         private:
             Object* _pObject;
 
+        public:
             void _addRef() {
                 if (_pObject) {
                     _pObject->_nRef++;
@@ -48,7 +52,6 @@ namespace lux::core {
                     }
                 }
             }
-        public:
             explicit Pointer(T* pObject = nullptr) :_pObject(pObject) {
                 _addRef();
             }
@@ -112,9 +115,32 @@ namespace lux::core {
             }
         };
 
-        virtual ~Object() = default;
-    };
+        std::string& getClassName() {
+            return _szType;
+        }
 
+        virtual std::string toString() {
+            return fmt::format("[object {}]", getClassName());
+        }
+
+        unsigned getId(){
+            return _nId;
+        }
+
+        virtual ~Object(){
+            Object::_runtime.erase(_nId);
+        };
+    
+        template<class T>
+        static Pointer<T> select(unsigned id){
+            auto pair = Object::_runtime.find(id);
+            if(pair!=Object::_runtime.end()){
+                return core::Pointer<T>((T*)pair->second);
+            }
+            return core::Pointer<T>(nullptr);
+        }
+    };
+    std::map<unsigned,Object *> Object::_runtime;
     template<class T> using Pointer = Object::Pointer<T>;
 } // namespace lux::core
 #endif

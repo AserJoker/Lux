@@ -67,6 +67,7 @@
         "vector": "cpp",
         "fstream": "cpp",
         "filesystem": "cpp",
-        "list": "cpp"
+        "list": "cpp",
+        "codecvt": "cpp"
     }
 }

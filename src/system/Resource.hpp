@@ -4,45 +4,15 @@
 #include <map>
 #include <cjson/cJSON.h>
 #include <fstream>
-#include <cstdio>
+#include <filesystem>
 #include "core/EventEmitter.hpp"
 #include "Native.hpp"
 #include "resource/Buffer.hpp"
-#include "Script.hpp"
-#define ADD_FUNC(obj,name) _ADD_FUNC(obj,name,Resource)
 namespace lux::system {
 	class Resource :public core::EventEmitter {
 	private:
 		std::map<std::string,std::string> _manifest;
 		std::map<std::string,core::Pointer<resource::Buffer>> _cache;
-
-		static duk_idx_t asset(duk_context *ctx){
-			auto R = INJECT(Resource);
-			CHECK_ARG_LEN(2,"asset need 2 argument");
-			CHECK_ARG_STRING(0,"asset need 2 string argument");
-			CHECK_ARG_STRING(1,"asset need 2 string argument");
-			auto token = duk_get_string(ctx,0);
-			std::string type = duk_get_string(ctx,1);
-			try{
-				auto buf = R->load(token);
-				if(type=="string"){
-					char *str = new char[buf->getBufferSize()+1];
-					str[buf->getBufferSize()] = 0;
-					buf->read(str);
-					duk_push_string(ctx,str);
-					delete[] str;
-				}else if(type=="buffer"){
-					auto target = duk_push_buffer(ctx,buf->getBufferSize(),0);
-					buf->read(target);
-				}else{
-					duk_reference_error(ctx,"unknown resource Type");
-				}
-			}catch(std::exception& exp){
-				std::cout<<exp.what()<<std::endl;
-				duk_push_undefined(ctx);
-			}
-			return 1;
-		}
 
 		void onInit() {
 			IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF );
@@ -109,10 +79,6 @@ namespace lux::system {
 				resolveObject(root);
 				cJSON_Delete(root);
 			}
-			auto script = INJECT(Script);
-			script::Object resource;
-			ADD_FUNC(resource,asset);
-			script->getEngine()->setValue("resource",&resource);
 		}
 		core::Pointer<resource::Buffer> load(const std::string& token){
 			auto pair = _cache.find(token);

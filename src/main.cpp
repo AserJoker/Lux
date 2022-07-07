@@ -31,7 +31,8 @@ class Demo:public core::EventEmitter{
     protected:
     void on(core::EventEmitter* emitter,const std::string& event) override{
         if(event==system::Application::EVENT_READY){
-            _pImage = resource::Image::create("texture::demo");
+            auto R = INJECT(system::Resource);
+            _pImage = resource::Image::create(R->load("texture::demo"));
         }
         else{
             SDL_Rect rc = {100,100,32,32};
