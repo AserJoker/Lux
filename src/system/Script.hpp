@@ -46,6 +46,7 @@ namespace lux::system
 			{
 				auto path = duk_get_string(ctx, 0);
 				auto isExists = std::filesystem::exists(path);
+				isExists&=std::filesystem::is_regular_file(path);
 				duk_push_boolean(ctx, isExists);
 				return 1;
 			}
