@@ -3,8 +3,11 @@
   "version": "0.1.0",
   "description": "",
   "scripts": {
-    "build":"tsc"
+    "build": "tsc"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^4.7.4"
+  }
 }

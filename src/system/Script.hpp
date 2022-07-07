@@ -26,7 +26,7 @@
 			duk_type_error(ctx, msg);   \
 		}                               \
 	}
-	
+
 #define CHECK_ARG_STRING(index, msg)    \
 	{                                   \
 		if (!duk_is_string(ctx, index)) \
@@ -34,30 +34,24 @@
 			duk_type_error(ctx, msg);   \
 		}                               \
 	}
-namespace lux::system
-{
-	class Script : public core::EventEmitter
-	{
+namespace lux::system {
+	class Script : public core::EventEmitter {
 	private:
-		class _Runtime
-		{
+		class _Runtime {
 		public:
-			static duk_idx_t exists(duk_context *ctx)
-			{
+			static duk_idx_t exists(duk_context* ctx) {
 				auto path = duk_get_string(ctx, 0);
 				auto isExists = std::filesystem::exists(path);
-				isExists&=std::filesystem::is_regular_file(path);
+				isExists &= std::filesystem::is_regular_file(path);
 				duk_push_boolean(ctx, isExists);
 				return 1;
 			}
-			static duk_idx_t loadModule(duk_context *ctx)
-			{
+			static duk_idx_t loadModule(duk_context* ctx) {
 				std::string name = duk_get_string(ctx, 0);
 				duk_push_undefined(ctx);
 				return 1;
 			}
-			static duk_idx_t load(duk_context *ctx)
-			{
+			static duk_idx_t load(duk_context* ctx) {
 				auto path = duk_get_string(ctx, 0);
 				auto mod = duk_get_top(ctx);
 				duk_push_object(ctx);
@@ -65,19 +59,17 @@ namespace lux::system
 				duk_put_prop_string(ctx, mod, "exports");
 				duk_put_global_string(ctx, "module");
 				mod = duk_get_top(ctx);
-				duk_get_global_string(ctx,"module");
-				duk_get_prop_string(ctx,mod,"exports");
-				duk_put_global_string(ctx,"exports");
+				duk_get_global_string(ctx, "module");
+				duk_get_prop_string(ctx, mod, "exports");
+				duk_put_global_string(ctx, "exports");
 				std::ifstream file;
 				file.open(path);
 				std::string source;
 				file >> std::noskipws;
-				while (!file.eof())
-				{
+				while (!file.eof()) {
 					char c;
 					file >> c;
-					if (!file.eof())
-					{
+					if (!file.eof()) {
 						source += c;
 					}
 				}
@@ -92,8 +84,7 @@ namespace lux::system
 				script->_engine.setValue("__filename", &__filename);
 				duk_push_string(ctx, path);
 				duk_compile_string_filename(ctx, 0, source.c_str());
-				if (duk_pcall(ctx, 0))
-				{
+				if (duk_pcall(ctx, 0)) {
 					script->_engine.error();
 				}
 				duk_get_global_string(ctx, "module");
@@ -101,92 +92,111 @@ namespace lux::system
 			}
 		};
 
-		static duk_idx_t asset(duk_context *ctx)
-		{
+		static duk_idx_t asset(duk_context* ctx) {
 			auto R = INJECT(Resource);
 			CHECK_ARG_LEN(2, "asset need 2 argument");
 			CHECK_ARG_STRING(0, "asset need 2 string argument");
 			CHECK_ARG_STRING(1, "asset need 2 string argument");
 			auto token = duk_get_string(ctx, 0);
 			std::string type = duk_get_string(ctx, 1);
-			try
-			{
+			try {
 				auto buf = R->load(token);
-				if (type == "string")
-				{
-					char *str = new char[buf->getBufferSize() + 1];
+				if (type == "string") {
+					char* str = new char[buf->getBufferSize() + 1];
 					str[buf->getBufferSize()] = 0;
 					buf->read(str);
 					duk_push_string(ctx, str);
 					delete[] str;
 				}
-				else if (type == "buffer")
-				{
+				else if (type == "buffer") {
 					auto target = duk_push_buffer(ctx, buf->getBufferSize(), 0);
 					buf->read(target);
 				}
-				else
-				{
+				else {
 					duk_reference_error(ctx, "unknown resource Type");
 				}
 			}
-			catch (std::exception &exp)
-			{
+			catch (std::exception& exp) {
 				std::cout << exp.what() << std::endl;
 				duk_push_undefined(ctx);
 			}
 			return 1;
 		}
-		static duk_idx_t println(duk_context *ctx)
-		{
+		static duk_idx_t println(duk_context* ctx) {
 			auto msg = duk_get_string(ctx, 0);
-			std::cout << msg<< std::endl;
+			std::cout << msg << std::endl;
 			return 0;
 		}
-		static duk_idx_t exit(duk_context *ctx)
-		{
+		static duk_idx_t exit(duk_context* ctx) {
 			auto app = INJECT(Application);
 			app->exit();
 			return 0;
 		}
-		
-		static duk_idx_t createImage(duk_context *ctx)
-		{
+
+		static duk_idx_t createImage(duk_context* ctx) {
 			CHECK_ARG_LEN(1, "asset need 1 argument");
 			CHECK_ARG_STRING(0, "asset need 1 string argument");
-			
+
 			auto R = INJECT(Resource);
-			auto token = duk_get_string(ctx,0);
-			try{
+			auto token = duk_get_string(ctx, 0);
+			try {
 				auto img = resource::Image::create(R->load(token));
 				img._addRef();
-				duk_push_number(ctx,img->getId());
-			}catch(std::exception& exp){
-				duk_reference_error(ctx,exp.what());
+				duk_push_number(ctx, img->getId());
+			}
+			catch (std::exception& exp) {
+				duk_reference_error(ctx, exp.what());
 			}
 			return 1;
 		}
-		static duk_idx_t deleteImage(duk_context *ctx){
+		static duk_idx_t deleteImage(duk_context* ctx) {
 			CHECK_ARG_LEN(1, "asset need 1 argument");
 			CHECK_ARG_NUMBER(0, "asset need 1 number argument");
-			auto id = duk_get_int(ctx,0);
+			auto id = duk_get_int(ctx, 0);
 			auto obj = core::Object::select<resource::Image>(id);
-			if(obj==nullptr){
-				duk_push_boolean(ctx,false);
+			if (obj == nullptr) {
+				duk_push_boolean(ctx, false);
 			}
-			else if(obj->getClassName()!=resource::Image::TOKEN){
-				duk_reference_error(ctx,"not image object");
-			}else{
+			else if (obj->getClassName() != resource::Image::TOKEN) {
+				duk_reference_error(ctx, "not image object");
+			}
+			else {
 				obj._release();
-				duk_push_boolean(ctx,true);
+				duk_push_boolean(ctx, true);
 			}
 			return 1;
+		}
+		static duk_idx_t drawImage(duk_context* ctx) {
+			CHECK_ARG_LEN(7, "asset need 7 argument");
+			CHECK_ARG_NUMBER(0, "asset need 7 number argument");
+			CHECK_ARG_NUMBER(1, "asset need 7 number argument");
+			CHECK_ARG_NUMBER(2, "asset need 7 number argument");
+			CHECK_ARG_NUMBER(3, "asset need 7 number argument");
+			CHECK_ARG_NUMBER(4, "asset need 7 number argument");
+			CHECK_ARG_NUMBER(5, "asset need 7 number argument");
+			CHECK_ARG_NUMBER(6, "asset need 7 number argument");
+			auto handle = duk_get_int(ctx, 0);
+			auto x = duk_get_int(ctx, 1);
+			auto y = duk_get_int(ctx, 2);
+			auto srcX = duk_get_int(ctx, 3);
+			auto srcY = duk_get_int(ctx, 4);
+			auto width = duk_get_int(ctx, 5);
+			auto height = duk_get_int(ctx, 6);
+			SDL_Rect target = {x,y,width,height};
+			SDL_Rect source = {srcX,srcY,width,height};
+			auto img = core::Object::select<resource::Image>(handle);
+			if (img == nullptr || img->getClassName() != resource::Image::TOKEN) {
+				duk_reference_error(ctx, "not image object");
+			}
+			else {
+				img->draw(&source, &target);
+			}
+			return 0;
 		}
 
 		script::Engine _engine;
-		
-		void onReady()
-		{
+
+		void onReady() {
 			script::String __dirname;
 			script::String __filename;
 			auto fullpath = std::filesystem::absolute("script/main.js");
@@ -198,25 +208,23 @@ namespace lux::system
 		}
 
 	protected:
-		void on(core::EventEmitter *emitter, const std::string &event)
-		{
-			if (event == Application::EVENT_READY)
-			{
+		void on(core::EventEmitter* emitter, const std::string& event) {
+			if (event == Application::EVENT_READY) {
 				onReady();
 				script::String event;
 				event.setValue(Application::EVENT_READY);
-				_engine.call("_on_system_event",(script::Value* )&event);
-			}else if(event == Graphic::EVENT_LOOP){
+				_engine.call("_on_system_event", (script::Value*)&event);
+			}
+			else if (event == Graphic::EVENT_LOOP) {
 				script::String event;
 				event.setValue(Graphic::EVENT_LOOP);
-				_engine.call("_on_system_event",(script::Value* )&event);
+				_engine.call("_on_system_event", (script::Value*)&event);
 			}
 		}
 
 	public:
 		DEFINE_TOKEN(lux::system::Script);
-		Script()
-		{
+		Script() {
 			auto app = INJECT(Application);
 			app->addEventListener(Application::EVENT_READY, this);
 			auto graphic = INJECT(Graphic);
@@ -230,13 +238,16 @@ namespace lux::system
 			_engine.setValue("exit", &exit);
 			script::Function asset;
 			asset.setValue(Script::asset);
-			_engine.setValue("asset",&asset);
+			_engine.setValue("asset", &asset);
 			script::Function createImage;
 			createImage.setValue(Script::createImage);
-			_engine.setValue("createImage",&createImage);
+			_engine.setValue("createImage", &createImage);
 			script::Function deleteImage;
 			deleteImage.setValue(Script::deleteImage);
-			_engine.setValue("deleteImage",&deleteImage);
+			_engine.setValue("deleteImage", &deleteImage);
+			script::Function drawImage;
+			drawImage.setValue(Script::drawImage);
+			_engine.setValue("drawImage", &drawImage);
 
 			script::Object runtime;
 			_ADD_FUNC(runtime, exists, _Runtime);
@@ -250,8 +261,7 @@ namespace lux::system
 			_engine.execFile("script/runtime/console.js");
 			_engine.execFile("script/runtime/event.js");
 		}
-		script::Engine *getEngine()
-		{
+		script::Engine* getEngine() {
 			return &_engine;
 		}
 	};

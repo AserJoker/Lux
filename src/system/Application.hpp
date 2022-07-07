@@ -7,10 +7,10 @@ namespace lux::system {
         bool _isRunning = false;
     public:
         DEFINE_TOKEN(lux::system::Application);
-        constexpr static const char* EVENT_INIT = "lux:system::Application.init";
-        constexpr static const char* EVENT_READY = "lux:system::Application.ready";
-        constexpr static const char* EVENT_QUIT = "lux:system::Application.quit";
-        constexpr static const char* EVENT_LOOP = "lux:system::Application.loop";
+        constexpr static const char* EVENT_INIT = "lux::system::Application.init";
+        constexpr static const char* EVENT_READY = "lux::system::Application.ready";
+        constexpr static const char* EVENT_QUIT = "lux::system::Application.quit";
+        constexpr static const char* EVENT_LOOP = "lux::system::Application.loop";
         void run() {
             _isRunning = true;
             emit(EVENT_INIT);
