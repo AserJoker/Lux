@@ -1,18 +1,20 @@
-let sprite: number = 0;
-let angle = 0;
+let sp: Sprite;
+let sps: Sprite;
+let direct = false;
 const start = () => {
-    _system_event_bus.listen("lux::system::Application.ready", () => {
-        sprite = Sprite_load("texture::demo");
-        Sprite_setTargetRect(sprite,100,100,64,64);
-        Sprite_setVisible(sprite,true);
-    });
-    _system_event_bus.listen("lux::system::Graphic.loop", () => {
-        Sprite_setRotation(sprite,16,16,angle);
-        Sprite_draw(sprite);
-        angle+=0.1;
-        if(angle>360){
-            angle = 0;
-        }
-    });
-}
+  _system_event_bus.listen("lux::system::Application.ready", () => {
+    sps = Sprite_load("texture::demo");
+    sps.setTargetRect(32, 32, 32, 32);
+    sps.setVisible(true);
+    sp = Sprite_create(100, 100, SpriteAccess.TARGET);
+    sp.setVisible(true);
+    Sprite_setRenderTarget(sp);
+    sps.draw();
+    Sprite_setRenderTarget(undefined);
+    sp.setOpacity(0);
+  });
+  _system_event_bus.listen("lux::system::Graphic.loop", () => {
+    sp.draw();
+  });
+};
 export { start };

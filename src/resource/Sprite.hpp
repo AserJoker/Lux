@@ -28,7 +28,7 @@ namespace lux::resource
 
     public:
         DEFINE_TOKEN(lux::resource::Sprite);
-        Sprite() : _width(2),_height(2),_target({0, 0, 2, 2}), _source({0, 0, 2, 2}), _center({1, 1}), _angle(0), _flip(SDL_FLIP_NONE), _visible(false), _pTexture(nullptr)
+        Sprite() : _width(2), _height(2), _target({0, 0, 2, 2}), _source({0, 0, 2, 2}), _center({1, 1}), _angle(0), _flip(SDL_FLIP_NONE), _visible(false), _pTexture(nullptr)
         {
             auto g = INJECT(system::Graphic);
             g->addEventListener(system::Graphic::EVENT_QUIT, this);
@@ -81,6 +81,16 @@ namespace lux::resource
             _center.y = y;
             _angle = angle;
         }
+        void setOpacity(Uint8 opacity){
+            if(SDL_SetTextureAlphaMod(_pTexture,opacity)!=0){
+                throw RUNTIME_ERROR(SDL_GetError());
+            }
+        }
+        void getOpacity(Uint8* opacity){
+            if(SDL_GetTextureAlphaMod(_pTexture,opacity)!=0){
+                throw RUNTIME_ERROR(SDL_GetError());
+            }
+        }
         void getVisible(bool *visible)
         {
             *visible = _visible;
@@ -100,12 +110,25 @@ namespace lux::resource
             *w = _target.w;
             *h = _target.h;
         }
+
         void getRotation(int *x, int *y, double *angle)
         {
             *x = _center.x;
             *y = _center.y;
             *angle = _angle;
         }
+
+        void getSize(int *width,int *height){
+            *width = _width;
+            *height = _height;
+        }
+
+        static void setTarget(core::Pointer<Sprite> sprite = nullptr)
+        {
+            auto g = INJECT(system::Graphic);
+            SDL_SetRenderTarget(g->getRenderer(), sprite != nullptr ? sprite->_pTexture : nullptr);
+        }
+
         static core::Pointer<Sprite> create(int width, int height, int access)
         {
             auto sprite = INJECT(Sprite);
@@ -123,6 +146,8 @@ namespace lux::resource
             sprite->_center.y = height / 2;
             sprite->_width = width;
             sprite->_height = height;
+            SDL_SetTextureAlphaMod(sprite->_pTexture,0);
+            throw RUNTIME_ERROR(SDL_GetError());
             return sprite;
         }
 

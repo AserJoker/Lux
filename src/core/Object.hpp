@@ -52,7 +52,7 @@ namespace lux::core {
                     }
                 }
             }
-            explicit Pointer(T* pObject = nullptr) :_pObject(pObject) {
+            Pointer(T* pObject = nullptr) :_pObject(pObject) {
                 _addRef();
             }
 

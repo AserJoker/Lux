@@ -1,2 +1,2 @@
-const engine = require("./engine").exports;
+const engine = require("./engine");
 engine.start();

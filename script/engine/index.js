@@ -1,21 +1,23 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.start = void 0;
-var sprite = 0;
-var angle = 0;
+var sp;
+var sps;
+var direct = false;
 var start = function () {
     _system_event_bus.listen("lux::system::Application.ready", function () {
-        sprite = Sprite_load("texture::demo");
-        Sprite_setTargetRect(sprite, 100, 100, 64, 64);
-        Sprite_setVisible(sprite, true);
+        sps = Sprite_load("texture::demo");
+        sps.setTargetRect(32, 32, 32, 32);
+        sps.setVisible(true);
+        sp = Sprite_create(100, 100, 2 /* SpriteAccess.TARGET */);
+        sp.setVisible(true);
+        Sprite_setRenderTarget(sp);
+        sps.draw();
+        Sprite_setRenderTarget(undefined);
+        sp.setOpacity(0);
     });
     _system_event_bus.listen("lux::system::Graphic.loop", function () {
-        Sprite_setRotation(sprite, 16, 16, angle);
-        Sprite_draw(sprite);
-        angle += 0.1;
-        if (angle > 360) {
-            angle = 0;
-        }
+        sp.draw();
     });
 };
 exports.start = start;
