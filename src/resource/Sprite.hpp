@@ -1,0 +1,155 @@
+#ifndef _H_LUX_RESOURCE_SPRITE_
+#define _H_LUX_RESOURCE_SPRITE_
+#include "system/Resource.hpp"
+#include "system/Graphic.hpp"
+namespace lux::resource
+{
+    class Sprite : public core::EventEmitter
+    {
+    private:
+        int _width;
+        int _height;
+        SDL_Rect _target;
+        SDL_Rect _source;
+        SDL_Point _center;
+        double _angle;
+        SDL_RendererFlip _flip;
+        bool _visible;
+        SDL_Texture *_pTexture;
+
+    protected:
+        void on(core::EventEmitter *emitter, const std::string &event)
+        {
+            if (event == system::Graphic::EVENT_QUIT)
+            {
+                dispose();
+            }
+        }
+
+    public:
+        DEFINE_TOKEN(lux::resource::Sprite);
+        Sprite() : _width(2),_height(2),_target({0, 0, 2, 2}), _source({0, 0, 2, 2}), _center({1, 1}), _angle(0), _flip(SDL_FLIP_NONE), _visible(false), _pTexture(nullptr)
+        {
+            auto g = INJECT(system::Graphic);
+            g->addEventListener(system::Graphic::EVENT_QUIT, this);
+        }
+        ~Sprite() override
+        {
+            dispose();
+        }
+        void dispose()
+        {
+            if (_pTexture)
+            {
+                SDL_DestroyTexture(_pTexture);
+                _pTexture = nullptr;
+            }
+        }
+        void draw()
+        {
+            if (this->_visible && this->_pTexture)
+            {
+                auto g = INJECT(system::Graphic);
+                if (SDL_RenderCopyEx(g->getRenderer(), _pTexture, &_source, &_target, _angle, &_center, _flip) != 0)
+                {
+                    throw RUNTIME_ERROR(SDL_GetError());
+                }
+            }
+        }
+        void setVisible(bool visible)
+        {
+            _visible = visible;
+        }
+        void setSourceRect(int x, int y, int w, int h)
+        {
+            _source.x = x;
+            _source.y = y;
+            _source.w = w;
+            _source.h = h;
+        }
+
+        void setTargetRect(int x, int y, int w, int h)
+        {
+            _target.x = x;
+            _target.y = y;
+            _target.w = w;
+            _target.h = h;
+        }
+        void setRotation(int x, int y, double angle)
+        {
+            _center.x = x;
+            _center.y = y;
+            _angle = angle;
+        }
+        void getVisible(bool *visible)
+        {
+            *visible = _visible;
+        }
+        void getSourceRect(int *x, int *y, int *w, int *h)
+        {
+            *x = _source.x;
+            *y = _source.y;
+            *w = _source.w;
+            *h = _source.h;
+        }
+
+        void getTargetRect(int *x, int *y, int *w, int *h)
+        {
+            *x = _target.x;
+            *y = _target.y;
+            *w = _target.w;
+            *h = _target.h;
+        }
+        void getRotation(int *x, int *y, double *angle)
+        {
+            *x = _center.x;
+            *y = _center.y;
+            *angle = _angle;
+        }
+        static core::Pointer<Sprite> create(int width, int height, int access)
+        {
+            auto sprite = INJECT(Sprite);
+            auto g = INJECT(system::Graphic);
+            sprite->_pTexture = SDL_CreateTexture(g->getRenderer(), SDL_PIXELFORMAT_ARGB8888, (SDL_TextureAccess)access, width, height);
+            if (!sprite->_pTexture)
+            {
+                throw RUNTIME_ERROR(SDL_GetError());
+            }
+            sprite->_source.w = width;
+            sprite->_source.h = height;
+            sprite->_target.w = width;
+            sprite->_target.h = height;
+            sprite->_center.x = width / 2;
+            sprite->_center.y = height / 2;
+            sprite->_width = width;
+            sprite->_height = height;
+            return sprite;
+        }
+
+        static core::Pointer<Sprite> load(core::Pointer<Buffer> buf)
+        {
+            auto sprite = INJECT(Sprite);
+            auto g = INJECT(system::Graphic);
+            auto surface = IMG_Load_RW(SDL_RWFromConstMem(buf->getBufferData(), (int)buf->getBufferSize()), 0);
+            sprite->_pTexture = SDL_CreateTextureFromSurface(g->getRenderer(), surface);
+            auto width = surface->w;
+            auto height = surface->h;
+            sprite->_source.w = width;
+            sprite->_source.h = height;
+            sprite->_target.w = width;
+            sprite->_target.h = height;
+            sprite->_center.x = width / 2;
+            sprite->_center.y = height / 2;
+            sprite->_width = width;
+            sprite->_height = height;
+            SDL_FreeSurface(surface);
+            if (!sprite->_pTexture)
+            {
+                throw RUNTIME_ERROR(SDL_GetError());
+            }
+            return sprite;
+        }
+    };
+} // namespace lux::resource
+
+#endif

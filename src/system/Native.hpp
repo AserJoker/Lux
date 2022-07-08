@@ -17,7 +17,7 @@ namespace lux::system
 			{
 				throw RUNTIME_ERROR(SDL_GetError());
 			}
-			_pWindow = SDL_CreateWindow("Lux Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, 0);
+			_pWindow = SDL_CreateWindow("Lux Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_ALLOW_HIGHDPI);
 			if (!_pWindow)
 			{
 				throw RUNTIME_ERROR(SDL_GetError());

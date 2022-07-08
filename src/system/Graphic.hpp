@@ -17,6 +17,7 @@ namespace lux::system
 				throw RUNTIME_ERROR(SDL_GetError());
 			}
 			SDL_SetRenderDrawColor(_pRenderer, 51, 76, 76, 255);
+			SDL_SetRenderDrawBlendMode(_pRenderer,SDL_BLENDMODE_BLEND);
 			emit(EVENT_INIT);
 		}
 		void onLoop()

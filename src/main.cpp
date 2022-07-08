@@ -13,7 +13,7 @@
 #include "system/Resource.hpp"
 #include "system/Script.hpp"
 
-#include "resource/Image.hpp"
+#include "resource/Sprite.hpp"
 #include "resource/Buffer.hpp"
 using namespace lux;
 
@@ -25,8 +25,8 @@ int main(int argc, char* argv[]) {
     setvbuf(stdout, nullptr, _IOFBF, 1000);
     #endif
     try {
-        core::Container::provide<resource::Image>(resource::Image::TOKEN, core::Container::PROTOTYPE);
         core::Container::provide<resource::Buffer>(resource::Buffer::TOKEN, core::Container::PROTOTYPE);
+        core::Container::provide<resource::Sprite>(resource::Sprite::TOKEN, core::Container::PROTOTYPE);
 
         PROVIDE(system::Application);
 
