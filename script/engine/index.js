@@ -14,7 +14,6 @@ var start = function () {
         Sprite_setRenderTarget(sp);
         sps.draw();
         Sprite_setRenderTarget(undefined);
-        sp.setOpacity(0);
     });
     _system_event_bus.listen("lux::system::Graphic.loop", function () {
         sp.draw();

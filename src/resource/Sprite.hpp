@@ -146,8 +146,7 @@ namespace lux::resource
             sprite->_center.y = height / 2;
             sprite->_width = width;
             sprite->_height = height;
-            SDL_SetTextureAlphaMod(sprite->_pTexture,0);
-            throw RUNTIME_ERROR(SDL_GetError());
+            SDL_SetTextureBlendMode( sprite->_pTexture , SDL_BLENDMODE_BLEND );
             return sprite;
         }
 

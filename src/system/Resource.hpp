@@ -15,7 +15,7 @@ namespace lux::system {
 		std::map<std::string,core::Pointer<resource::Buffer>> _cache;
 
 		void onInit() {
-			IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG  );
+			IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG |IMG_INIT_TIF|IMG_INIT_WEBP );
 		}
 		void onQuit() {
 			IMG_Quit();
