@@ -29,4 +29,40 @@
       }
     },
   };
+  const _tasks = [];
+  var _task_id = 0;
+  function _createTask(cb, delay) {
+    return {
+      cb, delay, id: ++_task_id, start: Date.now()
+    }
+  }
+  setTimeout = function (cb, delay) {
+    if (delay === undefined) {
+      delay = 0;
+    }
+    const task = _createTask(cb, delay);
+    _tasks.push(task);
+    return task.id;
+  }
+  clearTimeout = function (id) {
+    for (var i = 0; i < _tasks.length; i++) {
+      if (_tasks[i].id === id) {
+        _tasks.splice(id, 1);
+        return;
+      }
+    }
+  }
+  nextTick = function (cb) {
+    setTimeout(cb);
+  }
+  _system_event_bus.listen("lux::system::Graphic.loop", function () {
+    if (_tasks.length) {
+      const task = _tasks.shift();
+      if (Date.now() - task.start >= task.delay) {
+        task.cb();
+      } else {
+        _tasks.push(task);
+      }
+    }
+  });
 })();

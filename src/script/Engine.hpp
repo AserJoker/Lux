@@ -22,7 +22,7 @@ namespace lux::script {
 			}
 		}
 		void pushArray(Array* value) {
-			auto length = value->getLength();
+			auto length = (int)value->getLength();
 			duk_uarridx_t array = duk_get_top(_pCtx);
 			duk_push_array(_pCtx);
 			for (duk_idx_t i = 0;i < length;i++) {
@@ -57,8 +57,8 @@ namespace lux::script {
 				return;
 			}
 		}
-		template<class T,class ...Args>
-		void pushValue(T value,Args... values){
+		template<class T, class ...Args>
+		void pushValue(T value, Args... values) {
 			pushValue(value);
 			pushValue(values...);
 		}
@@ -87,7 +87,7 @@ namespace lux::script {
 					while (!file.eof()) {
 						char c;
 						file >> c;
-						if (!file.eof()) { 
+						if (!file.eof()) {
 							src += c;
 						}
 					}
@@ -107,14 +107,14 @@ namespace lux::script {
 			}
 		}
 		template<class ...Args>
-		void call(const std::string& name,Args... args){
+		void call(const std::string& name, Args... args) {
 			auto top = duk_get_top(_pCtx);
-			duk_get_global_string(_pCtx,name.c_str());
+			duk_get_global_string(_pCtx, name.c_str());
 			pushValue(args...);
-			if(duk_pcall(_pCtx,sizeof...(args))){
+			if (duk_pcall(_pCtx, sizeof...(args))) {
 				error();
 			}
-			duk_set_top(_pCtx,top);
+			duk_set_top(_pCtx, top);
 		}
 		void setValue(const std::string& name, Value* value) {
 			pushValue(value);

@@ -2,7 +2,7 @@ var _runtime = runtime;
 function resolve(root, reactive) {
   root = root.replace(/\\/g, "/");
   reactive = reactive.replace(/\\/g, "/");
-  if (reactive[0]==='/') {
+  if (reactive[0] === '/') {
     return reactive;
   }
   const rootPath = root.split("/");
@@ -23,6 +23,8 @@ function require(name) {
   var result;
   var absolute = resolve(__dirname, name);
   var current = module;
+  var dirname = __dirname;
+  var filename = __filename;
   if (_runtime.exists(absolute)) {
     if (require.cache[absolute]) {
       return require.cache[absolute];
@@ -54,6 +56,8 @@ function require(name) {
   require.cache[absolute] = result;
   module = current;
   exports = module.exports;
+  __dirname = dirname;
+  __filename = filename;
   return result;
 }
 require.cache = {};

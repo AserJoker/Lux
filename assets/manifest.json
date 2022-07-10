@@ -1,8 +1,11 @@
 {
-    "i18n":{
-        "zh_CN":"i18n/zh_CN.json"
+    "i18n": {
+        "zh_CN": "i18n/zh_CN.json"
     },
-    "texture":{
-        "demo":"texture/demo.png"
+    "texture": {
+        "demo": "texture/demo.png"
+    },
+    "font": {
+        "demo": "font/LXGWWenKai-Regular.ttf"
     }
 }

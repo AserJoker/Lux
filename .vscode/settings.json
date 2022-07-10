@@ -68,6 +68,8 @@
         "fstream": "cpp",
         "filesystem": "cpp",
         "list": "cpp",
-        "codecvt": "cpp"
+        "codecvt": "cpp",
+        "deque": "cpp",
+        "stack": "cpp"
     }
 }

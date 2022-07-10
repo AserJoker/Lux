@@ -15,18 +15,20 @@
 
 #include "resource/Sprite.hpp"
 #include "resource/Buffer.hpp"
+#include "resource/Font.hpp"
 using namespace lux;
 
 int main(int argc, char* argv[]) {
-    #if defined(_WIN32)
+#if defined(_WIN32)
     // Set console code page to UTF-8 so console known how to interpret string data
     SetConsoleOutputCP(CP_UTF8);
     // Enable buffering to prevent VS from chopping up UTF-8 byte sequences
     setvbuf(stdout, nullptr, _IOFBF, 1000);
-    #endif
+#endif
     try {
         core::Container::provide<resource::Buffer>(resource::Buffer::TOKEN, core::Container::PROTOTYPE);
         core::Container::provide<resource::Sprite>(resource::Sprite::TOKEN, core::Container::PROTOTYPE);
+        core::Container::provide<resource::Font>(resource::Font::TOKEN, core::Container::PROTOTYPE);
 
         PROVIDE(system::Application);
 
