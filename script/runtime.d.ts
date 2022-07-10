@@ -14,7 +14,7 @@ interface Sprite {
   getOpacity(): number;
 }
 interface Font {
-  drawText(text: string, x: number, y: number, r: number, g: number, b: number, a: number): void;
+  drawText(text: string, r: number, g: number, b: number, a: number): Sprite;
   dispose(): void;
 }
 const enum SpriteAccess {

@@ -5,19 +5,16 @@ export class Scene_Main extends Scene_Base {
     private font: Font | null = null;
     private lastTime = Date.now();
     public onMounted(): void {
-        this.demo = Sprite_load("texture::demo");
-        this.demo.setVisible(true);
         this.font = Font_load("font::demo", 32);
+        this.demo = this.font.drawText("hello world", 255, 0, 0, 255);
+        this.demo.setTargetRect(100, 100, 137, 32);
+        this.demo.setVisible(true);
     }
     public onRender(): void {
         const now = Date.now();
         if (this.demo) {
             this.demo.draw();
         }
-        if (this.font) {
-            this.font.drawText(`FPS:${1000 / (now - this.lastTime)}`.substring(0, 8), 120, 120, 255, 0, 0, 255);
-        }
-        console.log(1000 / (now - this.lastTime))
         this.lastTime = now;
     }
     public onUnmounted(): void {

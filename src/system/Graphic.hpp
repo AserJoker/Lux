@@ -9,25 +9,19 @@ namespace lux::system {
 	private:
 		std::map<std::string, TTF_Font*> _fonts;
 		SDL_Renderer* _pRenderer;
-		Uint64 _delay = 0;
 		void onInit(Native* native) {
 			auto window = native->getWindow();
 			_pRenderer = SDL_CreateRenderer(window, -1, 0);
 			if (!_pRenderer) {
 				throw RUNTIME_ERROR(SDL_GetError());
 			}
-			SDL_SetRenderDrawColor(_pRenderer, 51, 76, 76, 255);
+			SDL_SetRenderDrawColor(_pRenderer, 0, 0, 0, 255);
 			SDL_SetRenderDrawBlendMode(_pRenderer, SDL_BLENDMODE_BLEND);
 			emit(EVENT_INIT);
 		}
 		void onLoop() {
-			static Uint64 last = SDL_GetTicks64();
-			auto now = SDL_GetTicks64();
-			if (now - last >= _delay) {
-				SDL_RenderClear(_pRenderer);
-				emit(EVENT_LOOP);
-				last = now;
-			}
+			SDL_RenderClear(_pRenderer);
+			emit(EVENT_LOOP);
 			SDL_RenderPresent(_pRenderer);
 		}
 		void onQuit() {
@@ -59,16 +53,9 @@ namespace lux::system {
 			native->addEventListener(Native::EVENT_INIT, this);
 			native->addEventListener(Native::EVENT_LOOP, this);
 			native->addEventListener(Native::EVENT_QUIT, this);
-			setFPS(60);
 		}
 		SDL_Renderer* getRenderer() {
 			return _pRenderer;
-		}
-		void setFPS(Uint64 fps) {
-			_delay = 1000 / fps;
-		}
-		Uint64 getFPS() {
-			return 1000 / _delay;
 		}
 	};
 }

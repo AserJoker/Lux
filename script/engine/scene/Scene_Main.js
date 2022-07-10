@@ -27,19 +27,16 @@ var Scene_Main = /** @class */ (function (_super) {
         return _this;
     }
     Scene_Main.prototype.onMounted = function () {
-        this.demo = Sprite_load("texture::demo");
-        this.demo.setVisible(true);
         this.font = Font_load("font::demo", 32);
+        this.demo = this.font.drawText("hello world", 255, 0, 0, 255);
+        this.demo.setTargetRect(100, 100, 137, 32);
+        this.demo.setVisible(true);
     };
     Scene_Main.prototype.onRender = function () {
         var now = Date.now();
         if (this.demo) {
             this.demo.draw();
         }
-        if (this.font) {
-            this.font.drawText("FPS:".concat(1000 / (now - this.lastTime)).substring(0, 8), 120, 120, 255, 0, 0, 255);
-        }
-        console.log(1000 / (now - this.lastTime));
         this.lastTime = now;
     };
     Scene_Main.prototype.onUnmounted = function () {

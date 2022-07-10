@@ -2,6 +2,7 @@
 #define _H_LUX_RUNTIME_FONT_
 #include "resource/Font.hpp"
 #include "system/Resource.hpp"
+#include "Sprite.hpp"
 #include"util.hpp"
 namespace lux::runtime {
     class Font {
@@ -26,30 +27,28 @@ namespace lux::runtime {
             CHECK_ARG_NUMBER(2);
             CHECK_ARG_NUMBER(3);
             CHECK_ARG_NUMBER(4);
-            CHECK_ARG_NUMBER(5);
-            CHECK_ARG_NUMBER(6);
             auto top = duk_get_top(ctx);
             auto text = duk_get_string(ctx, 0);
-            auto x = duk_get_int(ctx, 1);
-            auto y = duk_get_int(ctx, 2);
-            auto r = duk_get_int(ctx, 3);
-            auto g = duk_get_int(ctx, 4);
-            auto b = duk_get_int(ctx, 5);
-            auto a = duk_get_int(ctx, 6);
+            auto r = duk_get_int(ctx, 1);
+            auto g = duk_get_int(ctx, 2);
+            auto b = duk_get_int(ctx, 3);
+            auto a = duk_get_int(ctx, 4);
             auto font = getObject<resource::Font>(ctx);
             if (font == nullptr || font->getClassName() != resource::Font::TOKEN) {
                 duk_type_error(ctx, "not font object");
             }
             else {
                 try {
-                    font->drawText(text, x, y, r, g, b, a);
+                    auto sprite = font->drawText(text, r, g, b, a);
+                    sprite._addRef();
+                    duk_set_top(ctx, top);
+                    Sprite::initSprite(sprite, ctx);
                 }
                 catch (std::exception& expr) {
                     duk_reference_error(ctx, expr.what());
                 }
             }
-            duk_set_top(ctx, top);
-            return 0;
+            return 1;
         }
         static void initFont(core::Pointer<resource::Font> font, duk_context* ctx) {
             auto obj = duk_get_top(ctx);

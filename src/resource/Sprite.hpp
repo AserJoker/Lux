@@ -180,6 +180,27 @@ namespace lux::resource {
             return sprite;
         }
 
+        static core::Pointer<Sprite> create(SDL_Surface* surface) {
+            auto sprite = INJECT(Sprite);
+            auto g = INJECT(system::Graphic);
+            sprite->_pTexture = SDL_CreateTextureFromSurface(g->getRenderer(), surface);
+            if (!sprite->_pTexture) {
+                throw RUNTIME_ERROR(SDL_GetError());
+            }
+            int width = surface->w;
+            int height = surface->h;
+            sprite->_source.w = width;
+            sprite->_source.h = height;
+            sprite->_target.w = width;
+            sprite->_target.h = height;
+            sprite->_center.x = width / 2;
+            sprite->_center.y = height / 2;
+            sprite->_width = width;
+            sprite->_height = height;
+            SDL_SetTextureBlendMode(sprite->_pTexture, SDL_BLENDMODE_BLEND);
+            return sprite;
+        }
+
         static core::Pointer<Sprite> load(core::Pointer<Buffer> buf) {
             auto sprite = INJECT(Sprite);
             auto g = INJECT(system::Graphic);
