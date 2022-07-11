@@ -28,8 +28,8 @@ var Scene_Main = /** @class */ (function (_super) {
     }
     Scene_Main.prototype.onMounted = function () {
         this.font = Font_load("font::demo", 32);
-        this.demo = this.font.drawText("hello world", 255, 0, 0, 255);
-        this.demo.setTargetRect(100, 100, 137, 32);
+        this.demo = Sprite_create(800, 600, 1 /* SpriteAccess.STREAM */);
+        this.font.drawText(this.demo, "hello world", 100, 100, 255, 0, 0, 255);
         this.demo.setVisible(true);
     };
     Scene_Main.prototype.onRender = function () {

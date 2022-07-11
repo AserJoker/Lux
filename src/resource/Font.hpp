@@ -32,17 +32,29 @@ namespace lux::resource {
                 _pFont = 0;
             }
         }
-        core::Pointer<Sprite> drawText(const char* text, Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
+        void drawText(core::Pointer<Sprite> target,const char* text,int x,int y, Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
             auto graphic = INJECT(system::Graphic);
             SDL_Surface* sur = nullptr;
-            SDL_Texture* tex = nullptr;
-            sur = TTF_RenderUTF8_Solid(_pFont, text, {r,g,b,a});
+            sur = TTF_RenderUTF8_Solid(_pFont, text, {0,0,0,255});
             if (!sur) {
                 throw RUNTIME_ERROR(SDL_GetError());
             }
-            auto sprite = Sprite::create(sur);
+            SDL_Surface* rgbaSurface = SDL_ConvertSurfaceFormat(sur,SDL_PIXELFORMAT_RGBA32,0);
+            if (!rgbaSurface) {
+                throw RUNTIME_ERROR(SDL_GetError());
+            }
             SDL_FreeSurface(sur);
-            return sprite;
+            SDL_LockSurface(rgbaSurface);
+            SDL_Color *pixels = (SDL_Color*)rgbaSurface->pixels;
+            for(size_t i=0;i<rgbaSurface->w*rgbaSurface->h;i++){
+                if(pixels[i].a == 255){
+                    pixels[i] = {b,g,a,a};
+                }
+            }
+            SDL_UnlockSurface(rgbaSurface);
+            SDL_Rect rc = {x,y,rgbaSurface->w,rgbaSurface->h};
+            target->update(&rc,rgbaSurface->pixels,rgbaSurface->pitch);
+            SDL_FreeSurface(rgbaSurface);
         }
         static core::Pointer<Font> load(core::Pointer<Buffer> buf, int size) {
             auto font = INJECT(Font);

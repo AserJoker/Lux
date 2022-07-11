@@ -6,8 +6,8 @@ export class Scene_Main extends Scene_Base {
     private lastTime = Date.now();
     public onMounted(): void {
         this.font = Font_load("font::demo", 32);
-        this.demo = this.font.drawText("hello world", 255, 0, 0, 255);
-        this.demo.setTargetRect(100, 100, 137, 32);
+        this.demo = Sprite_create(800,600,SpriteAccess.STREAM);
+        this.font.drawText(this.demo,"hello world",100,100,255,0,0,255);
         this.demo.setVisible(true);
     }
     public onRender(): void {

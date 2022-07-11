@@ -133,6 +133,11 @@ namespace lux::resource {
             *width = _width;
             *height = _height;
         }
+        void update(SDL_Rect *rc,const void *pixels,int pitch){
+            if(SDL_UpdateTexture(_pTexture,rc,pixels,pitch)!=0){
+                throw RUNTIME_ERROR(SDL_GetError());
+            }
+        }
 
         static void begin(core::Pointer<Sprite> sprite = nullptr) {
             RenderList list = {

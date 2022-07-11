@@ -6,7 +6,7 @@
 		auto length = duk_get_top(ctx);                   \
 		if (length < len)                                 \
 		{                                                 \
-			duk_reference_error(ctx, "INVALID ARGUMENT"); \
+			duk_reference_error(ctx, fmt::format("INVALID ARGUMENT: need {},got {}",len,length).c_str()); \
 		}                                                 \
 	}
 #define CHECK_ARG_NUMBER(index)                      \
@@ -48,7 +48,15 @@ namespace lux::runtime {
 		duk_set_top(ctx, _this);
 		return object;
 	}
-
+	template<class T> static core::Pointer<T> getObject(duk_context* ctx,duk_idx_t obj) {
+		auto top = duk_get_top(ctx);
+		auto _handle = duk_get_top(ctx);
+		duk_get_prop_string(ctx, obj, "handle");
+		auto id = duk_get_int(ctx, _handle);
+		auto object = core::Object::select<T>(id);
+		duk_set_top(ctx, top);
+		return object;
+	}
 } // namespace lux::runtime
 
 #endif
