@@ -14,41 +14,41 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Scene_Main = void 0;
 var Scene_Base_1 = require("./Scene_Base");
 var Scene_Main = /** @class */ (function (_super) {
     __extends(Scene_Main, _super);
     function Scene_Main() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.demo = null;
-        _this.font = null;
-        _this.lastTime = Date.now();
-        return _this;
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     Scene_Main.prototype.onMounted = function () {
-        this.font = Font_load("font::demo", 32);
-        this.demo = Sprite_create(800, 600, 1 /* SpriteAccess.STREAM */);
+        _super.prototype.onMounted.call(this);
         this.font.drawText(this.demo, "hello world", 100, 100, 255, 0, 0, 255);
         this.demo.setVisible(true);
     };
     Scene_Main.prototype.onRender = function () {
-        var now = Date.now();
-        if (this.demo) {
-            this.demo.draw();
-        }
-        this.lastTime = now;
+        _super.prototype.onRender.call(this);
+        this.demo.draw();
     };
     Scene_Main.prototype.onUnmounted = function () {
-        if (this.demo) {
-            this.demo.dispose();
-            this.demo = null;
-        }
-        if (this.font) {
-            this.font.dispose();
-            this.font = null;
-        }
+        _super.prototype.onUnmounted.call(this);
     };
+    __decorate([
+        Scene_Base_1.Scene_Base.Sprite(800, 600, 1 /* SpriteAccess.STREAM */)
+    ], Scene_Main.prototype, "demo", void 0);
+    __decorate([
+        Scene_Base_1.Scene_Base.Font("font::demo", 32)
+    ], Scene_Main.prototype, "font", void 0);
+    Scene_Main = __decorate([
+        Scene_Base_1.Scene_Base.Scene("main")
+    ], Scene_Main);
     return Scene_Main;
 }(Scene_Base_1.Scene_Base));
 exports.Scene_Main = Scene_Main;

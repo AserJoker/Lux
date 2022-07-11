@@ -7,7 +7,7 @@ var GameMain = /** @class */ (function () {
         var _this = this;
         _system_event_bus.listen("lux::system::Application.ready" /* EVENT.READY */, function () { return _this.onReady(); });
         _system_event_bus.listen("lux::system::Graphic.loop" /* EVENT.UPDATE */, function () { return _this.onUpdate(); });
-        this._scene = new scene_1.Scene_Main();
+        this._scene = scene_1.Scene_Base.get("main");
     }
     GameMain.get = function () {
         if (!GameMain._theGameMain) {

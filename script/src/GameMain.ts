@@ -1,4 +1,4 @@
-import { Scene_Main, Scene_Base } from "./scene";
+import {  Scene_Base } from "./scene";
 
 export class GameMain {
     private static _theGameMain: GameMain;
@@ -12,7 +12,7 @@ export class GameMain {
     public constructor() {
         _system_event_bus.listen(EVENT.READY, () => this.onReady());
         _system_event_bus.listen(EVENT.UPDATE, () => this.onUpdate());
-        this._scene = new Scene_Main();
+        this._scene = Scene_Base.get("main");
     }
     public loadScene(scene: Scene_Base) {
         this._scene.onUnmounted();
