@@ -26,16 +26,22 @@ var Scene_Base_1 = require("./Scene_Base");
 var Scene_Main = /** @class */ (function (_super) {
     __extends(Scene_Main, _super);
     function Scene_Main() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.x = 100;
+        return _this;
     }
     Scene_Main.prototype.onMounted = function () {
         _super.prototype.onMounted.call(this);
-        this.font.drawText(this.demo, "hello world", 100, 100, 255, 0, 0, 255);
         this.demo.setVisible(true);
+        _system_event_bus.listen("lux::system::Input.keydown" /* EVENT.KEYDOWN */, function (code) {
+            console.log(code);
+        });
     };
     Scene_Main.prototype.onRender = function () {
         _super.prototype.onRender.call(this);
+        this.font.drawText(this.demo, "hello world", this.x, 100, 255, 0, 0, 255);
         this.demo.draw();
+        this.x += 0.01;
     };
     Scene_Main.prototype.onUnmounted = function () {
         _super.prototype.onUnmounted.call(this);

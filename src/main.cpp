@@ -12,6 +12,7 @@
 #include "system/Graphic.hpp"
 #include "system/Resource.hpp"
 #include "system/Script.hpp"
+#include "system/Input.hpp"
 
 #include "resource/Sprite.hpp"
 #include "resource/Buffer.hpp"
@@ -36,11 +37,13 @@ int main(int argc, char* argv[]) {
         PROVIDE(system::Native);
         PROVIDE(system::Graphic);
         PROVIDE(system::Resource);
+        PROVIDE(system::Input);
 
         INJECT(system::Script);
         INJECT(system::Native);
         INJECT(system::Graphic);
         INJECT(system::Resource);
+        INJECT(system::Input);
         auto app = INJECT(system::Application);
         app->run();
         return 0;

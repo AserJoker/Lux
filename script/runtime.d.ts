@@ -24,12 +24,13 @@ const enum SpriteAccess {
 }
 const enum EVENT {
   READY = "lux::system::Application.ready",
-  UPDATE = "lux::system::Graphic.loop"
+  UPDATE = "lux::system::Graphic.loop",
+  KEYDOWN = "lux::system::Input.keydown"
 }
 declare const __dirname: string;
 declare const __filename: string;
 declare const _system_event_bus: {
-  listen: (event: string, callback: () => void) => () => void;
+  listen: (event: string, callback: (...args:any[]) => void) => () => void;
   remove: (event: string, callback: () => void) => void;
 };
 declare function require(path: string): any;

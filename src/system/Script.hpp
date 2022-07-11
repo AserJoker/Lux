@@ -3,6 +3,7 @@
 #include "Application.hpp"
 #include "Resource.hpp"
 #include "Graphic.hpp"
+#include "Input.hpp"
 #include "resource/Sprite.hpp"
 #include "resource/Font.hpp"
 #include "script/Engine.hpp"
@@ -149,6 +150,15 @@ namespace lux::system {
 				event.setValue(Graphic::EVENT_LOOP);
 				_engine.call("_on_system_event", (script::Value*)&event);
 			}
+			else if(event == Input::EVENT_KEYDOWN){
+				auto native = INJECT(Native);
+				auto e = native->getEvent();
+				script::String event;
+				event.setValue(Input::EVENT_KEYDOWN);
+				script::Number keycode;
+				keycode.setValue(e->key.keysym.scancode);
+				_engine.call("_on_system_event", (script::Value*)&event,(script::Value *)&keycode);
+			}
 		}
 
 	public:
@@ -159,6 +169,9 @@ namespace lux::system {
 			app->addEventListener(Application::EVENT_LOOP, this);
 			auto graphic = INJECT(Graphic);
 			graphic->addEventListener(Graphic::EVENT_LOOP, this);
+			auto input = INJECT(Input);
+			input->addEventListener(Input::EVENT_KEYDOWN,this);
+			input->addEventListener(Input::EVENT_KEYUP,this);
 
 			script::Function func;
 			SET_FUNC(println);

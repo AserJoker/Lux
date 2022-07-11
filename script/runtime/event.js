@@ -1,10 +1,14 @@
 (function () {
   const _listeners = {};
   _on_system_event = function (type) {
+    const args = [];
+    for(var i =1;i<arguments.length;i++){
+      args[i-1] = arguments[i];
+    }
     const listeners = _listeners[type];
     if (listeners) {
       for (var i = 0; i < listeners.length; i++) {
-        listeners[i]();
+        listeners[i].apply(undefined,args);
       }
     }
   }
