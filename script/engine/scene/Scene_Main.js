@@ -33,8 +33,8 @@ var Scene_Main = /** @class */ (function (_super) {
     Scene_Main.prototype.onMounted = function () {
         _super.prototype.onMounted.call(this);
         this.demo.setVisible(true);
-        _system_event_bus.listen("lux::system::Input.keydown" /* EVENT.KEYDOWN */, function (code) {
-            console.log(code);
+        _system_event_bus.listen("lux::system::Input.keydown" /* EVENT.KEYDOWN */, function (scancode) {
+            console.log(scancode);
         });
     };
     Scene_Main.prototype.onRender = function () {

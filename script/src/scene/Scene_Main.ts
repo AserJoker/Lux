@@ -10,8 +10,8 @@ export class Scene_Main extends Scene_Base {
     public onMounted(): void {
         super.onMounted();
         this.demo.setVisible(true);
-        _system_event_bus.listen(EVENT.KEYDOWN,(code:number)=>{
-            console.log(code);
+        _system_event_bus.listen(EVENT.KEYDOWN,(scancode:number)=>{
+            console.log(scancode);
         })
     }
     public onRender(): void {

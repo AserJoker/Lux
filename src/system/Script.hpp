@@ -159,6 +159,15 @@ namespace lux::system {
 				keycode.setValue(e->key.keysym.scancode);
 				_engine.call("_on_system_event", (script::Value*)&event,(script::Value *)&keycode);
 			}
+			else if(event == Input::EVENT_KEYUP){
+				auto native = INJECT(Native);
+				auto e = native->getEvent();
+				script::String event;
+				event.setValue(Input::EVENT_KEYUP);
+				script::Number keycode;
+				keycode.setValue(e->key.keysym.scancode);
+				_engine.call("_on_system_event", (script::Value*)&event,(script::Value *)&keycode);
+			}
 		}
 
 	public:
