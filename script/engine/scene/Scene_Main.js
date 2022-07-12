@@ -28,20 +28,35 @@ var Scene_Main = /** @class */ (function (_super) {
     function Scene_Main() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.x = 100;
+        _this.x_step = 0;
         return _this;
     }
     Scene_Main.prototype.onMounted = function () {
+        var _this = this;
         _super.prototype.onMounted.call(this);
         this.demo.setVisible(true);
-        _system_event_bus.listen("lux::system::Input.keydown" /* EVENT.KEYDOWN */, function (scancode) {
-            console.log(scancode);
+        _system_event_bus.listen("lux::system::Input.keydown" /* EVENT.KEYDOWN */, function (key) {
+            if (key === 79 /* SCANCODE.RIGHT */) {
+                _this.x_step = 1;
+            }
+            else if (key === 80 /* SCANCODE.LEFT */) {
+                _this.x_step = -1;
+            }
+        });
+        _system_event_bus.listen("lux::system::Input.keyup" /* EVENT.KEYUP */, function (key) {
+            if (key === 79 /* SCANCODE.RIGHT */ && _this.x_step === 1) {
+                _this.x_step = 0;
+            }
+            else if (key === 80 /* SCANCODE.LEFT */ && _this.x_step === -1) {
+                _this.x_step = 0;
+            }
         });
     };
     Scene_Main.prototype.onRender = function () {
         _super.prototype.onRender.call(this);
         this.font.drawText(this.demo, "hello world", this.x, 100, 255, 0, 0, 255);
         this.demo.draw();
-        this.x += 0.01;
+        this.x += this.x_step;
     };
     Scene_Main.prototype.onUnmounted = function () {
         _super.prototype.onUnmounted.call(this);
