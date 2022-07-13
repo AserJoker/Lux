@@ -32,8 +32,11 @@ var Scene_Base = /** @class */ (function () {
             if (release) {
                 target.onUnmounted = function () {
                     onUnmounted.call(this);
-                    release(this[name]);
-                    this[name] = null;
+                    var item = this[name];
+                    if (item) {
+                        release(item);
+                        this[name] = null;
+                    }
                 };
             }
         };
@@ -49,7 +52,9 @@ var Scene_Base = /** @class */ (function () {
         if (args.length === 1) {
             return Scene_Base.Attribute(function () { return Sprite_load(args[0]); }, function (sprite) { return sprite.dispose(); });
         }
-        return Scene_Base.Attribute(function () { return Sprite_create(args[0], args[1], args[2]); });
+        return Scene_Base.Attribute(function () {
+            return Sprite_create(args[0], args[1], args[2]);
+        });
     };
     Scene_Base._scenes = {};
     return Scene_Base;

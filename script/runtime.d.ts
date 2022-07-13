@@ -25,6 +25,7 @@ interface Font {
     a: number
   ): void;
   dispose(): void;
+  createSprite(text:string,r:number,g:number,b:number,a:number):Sprite;
 }
 const enum SpriteAccess {
   STATIC = 0,

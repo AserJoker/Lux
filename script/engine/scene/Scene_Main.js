@@ -27,13 +27,14 @@ var Scene_Main = /** @class */ (function (_super) {
     __extends(Scene_Main, _super);
     function Scene_Main() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.x = 100;
+        _this.x = 0;
         _this.x_step = 0;
         return _this;
     }
     Scene_Main.prototype.onMounted = function () {
         var _this = this;
         _super.prototype.onMounted.call(this);
+        this.demo = this.font.createSprite("hello world", 255, 0, 0, 255);
         this.demo.setVisible(true);
         _system_event_bus.listen("lux::system::Input.keydown" /* EVENT.KEYDOWN */, function (key) {
             if (key === 79 /* SCANCODE.RIGHT */) {
@@ -54,16 +55,14 @@ var Scene_Main = /** @class */ (function (_super) {
     };
     Scene_Main.prototype.onRender = function () {
         _super.prototype.onRender.call(this);
-        this.font.drawText(this.demo, "hello world", this.x, 100, 255, 0, 0, 255);
+        var _a = this.demo.getTargetRect(), _ = _a[0], y = _a[1], w = _a[2], h = _a[3];
+        this.demo.setTargetRect(this.x, y, w, h);
         this.demo.draw();
         this.x += this.x_step;
     };
     Scene_Main.prototype.onUnmounted = function () {
         _super.prototype.onUnmounted.call(this);
     };
-    __decorate([
-        Scene_Base_1.Scene_Base.Sprite(800, 600, 1 /* SpriteAccess.STREAM */)
-    ], Scene_Main.prototype, "demo", void 0);
     __decorate([
         Scene_Base_1.Scene_Base.Font("font::demo", 32)
     ], Scene_Main.prototype, "font", void 0);

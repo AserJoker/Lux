@@ -25,6 +25,34 @@ namespace lux::runtime
             duk_set_top(ctx, top);
             return 0;
         }
+        static duk_idx_t Font_createSprite(duk_context *ctx)
+        {
+            CHECK_ARG_LEN(5);
+            CHECK_ARG_STRING(0);
+            CHECK_ARG_NUMBER(1);
+            CHECK_ARG_NUMBER(2);
+            CHECK_ARG_NUMBER(3);
+            CHECK_ARG_NUMBER(4);
+            auto top = duk_get_top(ctx);
+            auto font = getObject<resource::Font>(ctx);
+            auto text = duk_get_string(ctx, 0);
+            auto r = duk_get_int(ctx, 1);
+            auto g = duk_get_int(ctx, 2);
+            auto b = duk_get_int(ctx, 3);
+            auto a = duk_get_int(ctx, 4);
+            if (font == nullptr || font->getClassName() != resource::Font::TOKEN)
+            {
+                duk_type_error(ctx, "not font object");
+            }
+            else
+            {
+                auto sprite = font->createSprite(text, r, g, b, a);
+                sprite._addRef();
+                duk_set_top(ctx, top);
+                Sprite::initSprite(sprite, ctx);
+            }
+            return 1;
+        }
         static duk_idx_t Font_drawText(duk_context *ctx)
         {
             CHECK_ARG_LEN(8);
@@ -77,6 +105,8 @@ namespace lux::runtime
             duk_put_prop_string(ctx, obj, "drawText");
             duk_push_c_function(ctx, Font::Font_dispose, 0);
             duk_put_prop_string(ctx, obj, "dispose");
+            duk_push_c_function(ctx, Font::Font_createSprite, 5);
+            duk_put_prop_string(ctx, obj, "createSprite");
         }
     };
 
