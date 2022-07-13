@@ -44,6 +44,9 @@ var Scene_Base = /** @class */ (function () {
     Scene_Base.Font = function (token, size) {
         return Scene_Base.Attribute(function () { return Font_load(token, size); }, function (font) { return font.dispose(); });
     };
+    Scene_Base.TextSprite = function (font, text, r, g, b, a) {
+        return Scene_Base.Attribute(function () { return font.createSprite(text, r, g, b, a); }, function (item) { return item.dispose(); });
+    };
     Scene_Base.Sprite = function () {
         var args = [];
         for (var _i = 0; _i < arguments.length; _i++) {
@@ -55,6 +58,28 @@ var Scene_Base = /** @class */ (function () {
         return Scene_Base.Attribute(function () {
             return Sprite_create(args[0], args[1], args[2]);
         });
+    };
+    Scene_Base.OnEvent = function (event) {
+        return function (target, name, descriptor) {
+            if (!descriptor.value) {
+                throw new Error("unsupport runtime");
+            }
+            var handle = descriptor.value;
+            var onMounted = target.onMounted;
+            var onUnmounted = target.onUnmounted;
+            var bindHandle;
+            target.onMounted = function () {
+                onMounted.call(this);
+                bindHandle = handle.bind(this);
+                _system_event_bus.listen(event, bindHandle);
+            };
+            target.onUnmounted = function () {
+                if (bindHandle) {
+                    _system_event_bus.remove(event, bindHandle);
+                }
+                onUnmounted.call(this);
+            };
+        };
     };
     Scene_Base._scenes = {};
     return Scene_Base;

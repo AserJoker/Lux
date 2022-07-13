@@ -20,52 +20,48 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Scene_Main = void 0;
 var Scene_Base_1 = require("./Scene_Base");
 var Scene_Main = /** @class */ (function (_super) {
     __extends(Scene_Main, _super);
     function Scene_Main() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.x = 0;
-        _this.x_step = 0;
-        return _this;
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     Scene_Main.prototype.onMounted = function () {
-        var _this = this;
         _super.prototype.onMounted.call(this);
         this.demo = this.font.createSprite("hello world", 255, 0, 0, 255);
         this.demo.setVisible(true);
-        _system_event_bus.listen("lux::system::Input.keydown" /* EVENT.KEYDOWN */, function (key) {
-            if (key === 79 /* SCANCODE.RIGHT */) {
-                _this.x_step = 1;
-            }
-            else if (key === 80 /* SCANCODE.LEFT */) {
-                _this.x_step = -1;
-            }
-        });
-        _system_event_bus.listen("lux::system::Input.keyup" /* EVENT.KEYUP */, function (key) {
-            if (key === 79 /* SCANCODE.RIGHT */ && _this.x_step === 1) {
-                _this.x_step = 0;
-            }
-            else if (key === 80 /* SCANCODE.LEFT */ && _this.x_step === -1) {
-                _this.x_step = 0;
-            }
-        });
+    };
+    Scene_Main.prototype.onMouseMove = function (x, y) {
+        var _a;
+        (_a = this.demo).setTargetRect.apply(_a, __spreadArray([x, y], this.demo.getSize(), false));
     };
     Scene_Main.prototype.onRender = function () {
         _super.prototype.onRender.call(this);
-        var _a = this.demo.getTargetRect(), _ = _a[0], y = _a[1], w = _a[2], h = _a[3];
-        this.demo.setTargetRect(this.x, y, w, h);
         this.demo.draw();
-        this.x += this.x_step;
     };
     Scene_Main.prototype.onUnmounted = function () {
         _super.prototype.onUnmounted.call(this);
+        if (this.demo) {
+            this.demo.dispose();
+        }
     };
     __decorate([
         Scene_Base_1.Scene_Base.Font("font::demo", 32)
     ], Scene_Main.prototype, "font", void 0);
+    __decorate([
+        Scene_Base_1.Scene_Base.OnEvent("lux::system::Input.mousemotion" /* EVENT.MOUSEMOTION */)
+    ], Scene_Main.prototype, "onMouseMove", null);
     Scene_Main = __decorate([
         Scene_Base_1.Scene_Base.Scene("main")
     ], Scene_Main);

@@ -168,6 +168,38 @@ namespace lux::system {
 				keycode.setValue(e->key.keysym.scancode);
 				_engine.call("_on_system_event", (script::Value*)&event,(script::Value *)&keycode);
 			}
+			else if(event == Input::EVENT_MOUSEBUTTONDOWN){
+				auto native = INJECT(Native);
+				auto e = native->getEvent();
+				script::String event;
+				event.setValue(Input::EVENT_MOUSEBUTTONDOWN);
+				script::Number button,x,y;
+				button.setValue(e->button.button);
+				x.setValue(e->button.x);
+				y.setValue(e->button.y);
+				_engine.call("_on_system_event", (script::Value*)&event,(script::Value*)&button,(script::Value*)&x,(script::Value*)&y);
+			}
+			else if(event == Input::EVENT_MOUSEBUTTONUP){
+				auto native = INJECT(Native);
+				auto e = native->getEvent();
+				script::String event;
+				event.setValue(Input::EVENT_MOUSEBUTTONUP);
+				script::Number button,x,y;
+				button.setValue(e->button.button);
+				x.setValue(e->button.x);
+				y.setValue(e->button.y);
+				_engine.call("_on_system_event", (script::Value*)&event,(script::Value*)&button,(script::Value*)&x,(script::Value*)&y);
+			}
+			else if(event == Input::EVENT_MOUSEMOTION){
+				auto native = INJECT(Native);
+				auto e = native->getEvent();
+				script::String event;
+				event.setValue(Input::EVENT_MOUSEMOTION);
+				script::Number x,y;
+				x.setValue(e->motion.x);
+				y.setValue(e->button.y);
+				_engine.call("_on_system_event", (script::Value*)&event,(script::Value*)&x,(script::Value*)&y);
+			}
 		}
 
 	public:
@@ -181,6 +213,9 @@ namespace lux::system {
 			auto input = INJECT(Input);
 			input->addEventListener(Input::EVENT_KEYDOWN,this);
 			input->addEventListener(Input::EVENT_KEYUP,this);
+			input->addEventListener(Input::EVENT_MOUSEBUTTONDOWN,this);
+			input->addEventListener(Input::EVENT_MOUSEBUTTONUP,this);
+			input->addEventListener(Input::EVENT_MOUSEMOTION,this);
 
 			script::Function func;
 			SET_FUNC(println);

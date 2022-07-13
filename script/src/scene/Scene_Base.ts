@@ -42,6 +42,19 @@ export class Scene_Base {
       (font) => font.dispose()
     );
   }
+  public static TextSprite(
+    font: Font,
+    text: string,
+    r: number,
+    g: number,
+    b: number,
+    a: number
+  ) {
+    return Scene_Base.Attribute(
+      () => font.createSprite(text, r, g, b, a),
+      (item) => item.dispose()
+    );
+  }
   public static Sprite(
     token: string
   ): <C extends Scene_Base>(target: C, name: string) => void;
@@ -64,5 +77,31 @@ export class Scene_Base {
         args[2] as SpriteAccess
       )
     );
+  }
+  public static OnEvent(event: EVENT) {
+    return <C extends Scene_Base, K extends Function>(
+      target: C,
+      name: string,
+      descriptor: TypedPropertyDescriptor<K>
+    ) => {
+      if (!descriptor.value) {
+        throw new Error("unsupport runtime");
+      }
+      const handle = descriptor.value as Function as (...args: any[]) => void;
+      const onMounted = target.onMounted;
+      const onUnmounted = target.onUnmounted;
+      let bindHandle: (...args: any[]) => void;
+      target.onMounted = function (this: C) {
+        onMounted.call(this);
+        bindHandle = handle.bind(this);
+        _system_event_bus.listen(event, bindHandle);
+      };
+      target.onUnmounted = function (this: C) {
+        if (bindHandle) {
+          _system_event_bus.remove(event, bindHandle);
+        }
+        onUnmounted.call(this);
+      };
+    };
   }
 }

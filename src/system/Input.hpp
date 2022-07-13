@@ -21,10 +21,13 @@ namespace lux::system
                     emit(EVENT_KEYUP);
                     break;
                 case SDL_MOUSEBUTTONDOWN:
+                    emit(EVENT_MOUSEBUTTONDOWN);
                     break;
                 case SDL_MOUSEBUTTONUP:
+                    emit(EVENT_MOUSEBUTTONUP);
                     break;
                 case SDL_MOUSEMOTION:
+                    emit(EVENT_MOUSEMOTION);
                     break;
                 case SDL_MOUSEWHEEL:
                     break;
@@ -43,6 +46,9 @@ namespace lux::system
         }
         static constexpr const char *EVENT_KEYDOWN = "lux::system::Input.keydown";
         static constexpr const char *EVENT_KEYUP = "lux::system::Input.keyup";
+        static constexpr const char *EVENT_MOUSEBUTTONDOWN = "lux::system::Input.mousebuttondown";
+        static constexpr const char *EVENT_MOUSEBUTTONUP = "lux::system::Input.mousebuttonup";
+        static constexpr const char *EVENT_MOUSEMOTION = "lux::system::Input.mousemotion";
     };
 } // namespace lux::system
 

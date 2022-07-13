@@ -37,6 +37,14 @@ const enum EVENT {
   UPDATE = "lux::system::Graphic.loop",
   KEYDOWN = "lux::system::Input.keydown",
   KEYUP = "lux::system::Input.keyup",
+  MOUSEDOWN = "lux::system::Input.mousebuttondown",
+  MOUSENUP = "lux::system::Input.mousebuttonup",
+  MOUSEMOTION = "lux::system::Input.mousemotion"
+}
+const enum MOUSE{
+  LEFT = 1,
+  RIGHT = 3,
+  MIDDLE = 2
 }
 const enum SCANCODE {
   A = 4,
