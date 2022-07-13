@@ -1,4 +1,6 @@
-import {  Scene_Base } from "../scene";
+import {  Scene_Base } from "../scene/Scene_Base";
+import { System_Camera } from "./System_Camera";
+import { System_Map } from "./System_Map";
 
 export class System_Main {
     private static _theSystem_Main: System_Main;
@@ -9,6 +11,8 @@ export class System_Main {
         return System_Main._theSystem_Main;
     }
     private _scene: Scene_Base;
+    public $map = new System_Map();
+    public $camera = new System_Camera();
     public constructor() {
         this._scene = Scene_Base.get("main");
         _system_event_bus.listen(EVENT.READY, () => this.onReady());

@@ -10,6 +10,7 @@
 #include "runtime/util.hpp"
 #include "runtime/Font.hpp"
 #include "runtime/Sprite.hpp"
+#include "runtime/Native.hpp"
 #define _ADD_FUNC(obj, name, host) \
 	script::Function name;         \
 	name.setValue(host::name);     \
@@ -226,6 +227,10 @@ namespace lux::system {
 			_SET_FUNC(Sprite_begin, runtime);
 			_SET_FUNC(Sprite_end, runtime);
 			_SET_FUNC(Font_load, runtime);
+
+			script::Object native;
+			_ADD_FUNC(native,getWindowSize,runtime::Native);
+			_engine.setValue("native",&native);
 
 			script::Object runtime;
 			_ADD_FUNC(runtime, exists, _Runtime);

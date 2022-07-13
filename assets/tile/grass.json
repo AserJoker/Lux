@@ -1,0 +1,5 @@
+{
+    "name":"grass",
+    "texture":"texture::tile::grass",
+    "tags":[1]
+}

@@ -20,48 +20,45 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Scene_Main = void 0;
+var system_1 = require("../system");
 var Scene_Base_1 = require("./Scene_Base");
 var Scene_Main = /** @class */ (function (_super) {
     __extends(Scene_Main, _super);
     function Scene_Main() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.x = 0;
+        _this.y = 0;
+        return _this;
     }
     Scene_Main.prototype.onMounted = function () {
         _super.prototype.onMounted.call(this);
-        this.demo = this.font.createSprite("hello world", 255, 0, 0, 255);
-        this.demo.setVisible(true);
-    };
-    Scene_Main.prototype.onMouseMove = function (x, y) {
-        var _a;
-        (_a = this.demo).setTargetRect.apply(_a, __spreadArray([x, y], this.demo.getSize(), false));
+        this.$system = system_1.System_Main.get();
+        this.$system.$map.loadTile("tile::grass");
     };
     Scene_Main.prototype.onRender = function () {
         _super.prototype.onRender.call(this);
-        this.demo.draw();
+        var _a = this.$system.$camera.trasformToNative(this.x, this.y), x = _a[0], y = _a[1];
+        this.$system.$map.draw(x, y, "grass", 0);
+        console.log(this.$system.$camera.getPosition().join(','));
     };
     Scene_Main.prototype.onUnmounted = function () {
         _super.prototype.onUnmounted.call(this);
-        if (this.demo) {
-            this.demo.dispose();
+    };
+    Scene_Main.prototype.onKeydown = function (key) {
+        if (key === 7 /* SCANCODE.D */) {
+            this.x += 1;
+            this.$system.$camera.move(1, 0);
+        }
+        if (key === 4 /* SCANCODE.A */) {
+            this.x -= 1;
+            this.$system.$camera.move(-1, 0);
         }
     };
     __decorate([
-        Scene_Base_1.Scene_Base.Font("font::demo", 32)
-    ], Scene_Main.prototype, "font", void 0);
-    __decorate([
-        Scene_Base_1.Scene_Base.OnEvent("lux::system::Input.mousemotion" /* EVENT.MOUSEMOTION */)
-    ], Scene_Main.prototype, "onMouseMove", null);
+        Scene_Base_1.Scene_Base.OnEvent("lux::system::Input.keydown" /* EVENT.KEYDOWN */)
+    ], Scene_Main.prototype, "onKeydown", null);
     Scene_Main = __decorate([
         Scene_Base_1.Scene_Base.Scene("main")
     ], Scene_Main);

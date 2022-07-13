@@ -1,12 +1,27 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Scene_Base = void 0;
-var Scene_Base = /** @class */ (function () {
+var base_1 = require("../base");
+var Scene_Base = /** @class */ (function (_super) {
+    __extends(Scene_Base, _super);
     function Scene_Base() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-    Scene_Base.prototype.onMounted = function () { };
-    Scene_Base.prototype.onRender = function () { };
-    Scene_Base.prototype.onUnmounted = function () { };
     Scene_Base.Scene = function (name) {
         return function (classObject) {
             Scene_Base._scenes[name] = classObject;
@@ -21,67 +36,7 @@ var Scene_Base = /** @class */ (function () {
             throw new Error("unknown scene:".concat(name));
         }
     };
-    Scene_Base.Attribute = function (getter, release) {
-        return function (target, name) {
-            var onMounted = target.onMounted;
-            var onUnmounted = target.onUnmounted;
-            target.onMounted = function () {
-                this[name] = getter();
-                onMounted.call(this);
-            };
-            if (release) {
-                target.onUnmounted = function () {
-                    onUnmounted.call(this);
-                    var item = this[name];
-                    if (item) {
-                        release(item);
-                        this[name] = null;
-                    }
-                };
-            }
-        };
-    };
-    Scene_Base.Font = function (token, size) {
-        return Scene_Base.Attribute(function () { return Font_load(token, size); }, function (font) { return font.dispose(); });
-    };
-    Scene_Base.TextSprite = function (font, text, r, g, b, a) {
-        return Scene_Base.Attribute(function () { return font.createSprite(text, r, g, b, a); }, function (item) { return item.dispose(); });
-    };
-    Scene_Base.Sprite = function () {
-        var args = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            args[_i] = arguments[_i];
-        }
-        if (args.length === 1) {
-            return Scene_Base.Attribute(function () { return Sprite_load(args[0]); }, function (sprite) { return sprite.dispose(); });
-        }
-        return Scene_Base.Attribute(function () {
-            return Sprite_create(args[0], args[1], args[2]);
-        });
-    };
-    Scene_Base.OnEvent = function (event) {
-        return function (target, name, descriptor) {
-            if (!descriptor.value) {
-                throw new Error("unsupport runtime");
-            }
-            var handle = descriptor.value;
-            var onMounted = target.onMounted;
-            var onUnmounted = target.onUnmounted;
-            var bindHandle;
-            target.onMounted = function () {
-                onMounted.call(this);
-                bindHandle = handle.bind(this);
-                _system_event_bus.listen(event, bindHandle);
-            };
-            target.onUnmounted = function () {
-                if (bindHandle) {
-                    _system_event_bus.remove(event, bindHandle);
-                }
-                onUnmounted.call(this);
-            };
-        };
-    };
     Scene_Base._scenes = {};
     return Scene_Base;
-}());
+}(base_1.Base));
 exports.Scene_Base = Scene_Base;

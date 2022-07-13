@@ -271,6 +271,9 @@ declare const _system_event_bus: {
   listen: (event: string, callback: (...args: any[]) => void) => () => void;
   remove: (event: string, callback: () => void) => void;
 };
+declare const native:{
+  getWindowSize():[number,number];
+};
 declare function require(path: string): any;
 declare function println(msg: string): void;
 declare function exit(): void;
