@@ -1,6 +1,6 @@
-import { GameMain } from "./GameMain";
+import { System_Main } from "./system";
 
 const start = () => {
-  GameMain.get();
+  System_Main.get();
 };
 export { start };

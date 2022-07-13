@@ -1,18 +1,18 @@
-import {  Scene_Base } from "./scene";
+import {  Scene_Base } from "../scene";
 
-export class GameMain {
-    private static _theGameMain: GameMain;
+export class System_Main {
+    private static _theSystem_Main: System_Main;
     public static get() {
-        if (!GameMain._theGameMain) {
-            GameMain._theGameMain = new GameMain();
+        if (!System_Main._theSystem_Main) {
+            System_Main._theSystem_Main = new System_Main();
         }
-        return GameMain._theGameMain;
+        return System_Main._theSystem_Main;
     }
     private _scene: Scene_Base;
     public constructor() {
+        this._scene = Scene_Base.get("main");
         _system_event_bus.listen(EVENT.READY, () => this.onReady());
         _system_event_bus.listen(EVENT.UPDATE, () => this.onUpdate());
-        this._scene = Scene_Base.get("main");
     }
     public loadScene(scene: Scene_Base) {
         this._scene.onUnmounted();
