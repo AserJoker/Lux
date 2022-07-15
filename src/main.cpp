@@ -6,17 +6,7 @@
 
 #include "core/Object.hpp"
 #include "core/Container.hpp"
-#include "core/EventEmitter.hpp"
-#include "system/Application.hpp"
-#include "system/Native.hpp"
-#include "system/Graphic.hpp"
-#include "system/Resource.hpp"
-#include "system/Script.hpp"
-#include "system/Input.hpp"
 
-#include "resource/Sprite.hpp"
-#include "resource/Buffer.hpp"
-#include "resource/Font.hpp"
 using namespace lux;
 
 int main(int argc, char* argv[]) {
@@ -27,25 +17,7 @@ int main(int argc, char* argv[]) {
     setvbuf(stdout, nullptr, _IOFBF, 1000);
 #endif
     try {
-        core::Container::provide<resource::Buffer>(resource::Buffer::TOKEN, core::Container::PROTOTYPE);
-        core::Container::provide<resource::Sprite>(resource::Sprite::TOKEN, core::Container::PROTOTYPE);
-        core::Container::provide<resource::Font>(resource::Font::TOKEN, core::Container::PROTOTYPE);
 
-        PROVIDE(system::Application);
-
-        PROVIDE(system::Script);
-        PROVIDE(system::Native);
-        PROVIDE(system::Graphic);
-        PROVIDE(system::Resource);
-        PROVIDE(system::Input);
-
-        INJECT(system::Script);
-        INJECT(system::Native);
-        INJECT(system::Graphic);
-        INJECT(system::Resource);
-        INJECT(system::Input);
-        auto app = INJECT(system::Application);
-        app->run();
         return 0;
 
     }
