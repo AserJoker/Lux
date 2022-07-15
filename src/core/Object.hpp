@@ -1,15 +1,11 @@
 #ifndef _H_LUX_CORE_OBJECT_
 #define _H_LUX_CORE_OBJECT_
 
+#include "util.hpp"
 #include <exception>
 #include <fmt/format.h>
 #include <map>
 #include <string>
-
-#define RUNTIME_ERROR(msg)                                                     \
-  std::runtime_error(fmt::format("{} :\n\t at {}:{}", msg, __FILE__, __LINE__))
-
-#define DEFINE_TOKEN(token) constexpr static const char *TOKEN = #token;
 
 namespace lux::core {
 class Object {
@@ -36,8 +32,13 @@ public:
   private:
     Object *_pObject;
 
+  protected:
+    virtual T *get() { return (T *)this->_pObject; }
+    virtual void set(Object *obj) { this->_pObject = obj; }
+
   public:
     void _addRef() {
+      auto _pObject = get();
       if (_pObject) {
         _pObject->_nRef++;
       }
@@ -60,15 +61,15 @@ public:
 
     virtual ~Pointer() { _release(); }
 
-    T *operator->() { return (T *)_pObject; }
+    T *operator->() { return get(); }
 
-    T &operator*() { return *(T *)_pObject; }
+    T &operator*() { return *get(); }
 
-    T *week() { return (T *)_pObject; }
+    T *week() { return (T *)get(); }
 
     Pointer<T> &operator=(T *pObject) {
       _release();
-      _pObject = pObject;
+      set(pObject);
       _addRef();
       return *this;
     }
@@ -76,22 +77,22 @@ public:
     Pointer<T> &operator=(const Pointer<T> &another) {
       if (this != &another) {
         _release();
-        _pObject = another._pObject;
+        set(another._pObject);
         _addRef();
       }
       return *this;
     }
 
-    bool operator==(T *pObject) { return _pObject == pObject; }
+    bool operator==(T *pObject) { return get() == pObject; }
 
     bool operator==(const Pointer<T> &another) {
-      return _pObject == another._pObject;
+      return get() == another._pObject;
     }
 
-    bool operator!=(T *pObject) { return _pObject != pObject; }
+    bool operator!=(T *pObject) { return get() != pObject; }
 
     bool operator!=(const Pointer<T> &another) {
-      return _pObject != another._pObject;
+      return get() != another._pObject;
     }
 
     template <class K> Pointer<K> cast() {
@@ -110,16 +111,16 @@ public:
 
   virtual ~Object() { Object::_runtime.erase(_nId); };
 
-  template <class T> static Pointer<T> select(unsigned id) {
+  template <class T> static Object::Pointer<T> select(unsigned id) {
     auto pair = Object::_runtime.find(id);
     if (pair != Object::_runtime.end()) {
-      return core::Pointer<T>((T *)pair->second);
+      return core::Object::Pointer<T>((T *)pair->second);
     }
-    return core::Pointer<T>(nullptr);
+    return core::Object::Pointer<T>(nullptr);
   }
 };
 template <class T> using RELEASE = void (*)(T *obj);
-template <class T, RELEASE<T> release> class Ref : public Object {
+template <class T, RELEASE<T> release = nullptr> class Ref : public Object {
 private:
   T *_value;
 
@@ -128,10 +129,14 @@ public:
   T *getValue() { return _value; }
   ~Ref() override {
     if (_value) {
-      release(_value);
+      if (release) {
+        release(_value);
+      } else {
+        delete _value;
+      }
     }
   }
-  static core::Object::Pointer<Ref<T, release>> ref(T *value) {
+  static core::Object::Pointer<Ref<T, release>> ref(T *value = new T()) {
     return new Ref(value);
   }
 };
