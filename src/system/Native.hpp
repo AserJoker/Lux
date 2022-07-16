@@ -1,13 +1,14 @@
 #ifndef _H_LUX_SYSTEM_NATIVE_
 #define _H_LUX_SYSTEM_NATIVE_
+#include "core/Dependence.hpp"
+#include "core/EventBus.hpp"
 #include "Application.hpp"
-#include "EventBus.hpp"
 #include "interface/INative.hpp"
 #include "event/MainloopEvent.hpp"
 namespace lux::system {
   class Native : public INative,
-    public IComponent::Dependence<Application>,
-    public EventBus::EventListener<event::MainloopEvent> {
+    public core::Dependence<Application>,
+    public core::EventBus::EventListener<event::MainloopEvent> {
   private:
     SDL_Window* _pWindow;
 

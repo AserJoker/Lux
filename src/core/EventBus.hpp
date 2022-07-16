@@ -1,11 +1,11 @@
-#ifndef _H_LUX_SYSTEM_EVENTBUS_
-#define _H_LUX_SYSTEM_EVENTBUS_
-#include "core/Object.hpp"
+#ifndef _H_LUX_CORE_EVENTBUS_
+#define _H_LUX_CORE_EVENTBUS_
+#include "Object.hpp"
 #include <map>
 #include <string>
 #include <vector>
-namespace lux::system {
-  class EventBus : public core::Object {
+namespace lux::core {
+  class EventBus : public Object {
   public:
     class BaseEventListener {};
 
@@ -13,7 +13,7 @@ namespace lux::system {
     std::map<std::string, std::vector<BaseEventListener*>> _listeners;
 
   public:
-    DEFINE_TOKEN(lux::system::EventBus);
+    DEFINE_TOKEN(lux::core::EventBus);
     template <c_string type> class BaseEvent {
     public:
       BaseEvent() {};

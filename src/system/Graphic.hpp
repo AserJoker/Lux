@@ -1,13 +1,14 @@
 #ifndef _H_LUX_SYSTEM_GRAPHIC_
 #define _H_LUX_SYSTEM_GRAPHIC_
+#include "core/Dependence.hpp"
 #include "interface/IGraphic.hpp"
 #include "interface/INative.hpp"
 #include "Application.hpp"
 #include "event/MainloopEvent.hpp"
 namespace lux::system {
     class Graphic :public IGraphic,
-        public IComponent::Dependence<INative>,
-        public EventBus::EventListener<event::MainloopEvent> {
+        public core::Dependence<INative>,
+        public core::EventBus::EventListener<event::MainloopEvent> {
     private:
         SDL_Renderer* _pRenderer;
     public:

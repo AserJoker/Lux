@@ -3,19 +3,19 @@
 #include "./interface/IComponent.hpp"
 #include "core/Object.hpp"
 #include "event/MainloopEvent.hpp"
-#include "EventBus.hpp"
+#include "core/EventBus.hpp"
 #include <SDL.h>
 #include <vector>
 namespace lux::system {
   class Application : public core::Object {
   private:
     bool _isExit;
-    core::Pointer<EventBus> _pEventBus;
+    core::Pointer<core::EventBus> _pEventBus;
 
   public:
     DEFINE_TOKEN(lux::system::Application);
     Application() : _isExit(false) {
-      _pEventBus = INJECT(EventBus);
+      _pEventBus = INJECT(core::EventBus);
       if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
         throw SDL_ERROR;
       }

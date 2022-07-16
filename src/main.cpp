@@ -6,9 +6,9 @@
 
 #include "core/Container.hpp"
 #include "core/Object.hpp"
+#include "core/EventBus.hpp"
 
 #include "system/Application.hpp"
-#include "system/EventBus.hpp"
 #include "system/Native.hpp"
 #include "system/Graphic.hpp"
 using namespace lux;
@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
   // Enable buffering to prevent VS from chopping up UTF-8 byte sequences
   setvbuf(stdout, nullptr, _IOFBF, 1000);
 #endif
-  PROVIDE(system::EventBus);
+  PROVIDE(core::EventBus);
   PROVIDE(system::Native);
   PROVIDE(system::Application);
   PROVIDE(system::Graphic);
