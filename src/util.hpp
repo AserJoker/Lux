@@ -6,9 +6,9 @@
 
 template<size_t N>
 struct c_string {
-    constexpr c_string(const char (&str)[N]) {
-        std::copy_n(str, N, value);
-    }
-    char value[N];
+  constexpr c_string(const char(&str)[N]) {
+    std::copy_n(str, N, value);
+  }
+  char value[N];
 };
 #endif

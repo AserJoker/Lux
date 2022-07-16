@@ -12,7 +12,7 @@
 #include "system/Native.hpp"
 using namespace lux;
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
 #if defined(_WIN32)
   // Set console code page to UTF-8 so console known how to interpret string
   // data
@@ -28,7 +28,8 @@ int main(int argc, char *argv[]) {
     app->install<system::Native>();
     app->run();
     return 0;
-  } catch (std::exception &exp) {
+  }
+  catch (std::exception& exp) {
     std::cout << exp.what() << std::endl;
     return -1;
   }
