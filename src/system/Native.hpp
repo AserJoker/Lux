@@ -3,36 +3,39 @@
 #include "Application.hpp"
 #include "EventBus.hpp"
 #include "interface/INative.hpp"
+#include "event/MainloopEvent.hpp"
 namespace lux::system {
   class Native : public INative,
-    public EventBus::EventListener<EventBus::BaseEvent<"mainloop">>,
-    public EventBus::EventListener<EventBus::BaseEvent<"quit">> {
+    public IComponent::Dependence<Application>,
+    public EventBus::EventListener<event::MainloopEvent> {
   private:
     SDL_Window* _pWindow;
 
   public:
-    Native() : _pWindow(nullptr) {}
-    void onPreInitialize() {};
-    void onInitialize() {
+    Native() : _pWindow(nullptr) {
       _pWindow = SDL_CreateWindow("Lux Demo", SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED, 800, 600, 0);
       if (!_pWindow) {
         throw SDL_ERROR;
       }
-      auto bus = INJECT(EventBus);
-    };
-    void onPostInitialize() {};
-    void on(EventBus::BaseEvent<"mainloop">*) override {
+    }
+    ~Native() override {
+      if (_pWindow) {
+        SDL_DestroyWindow(_pWindow);
+        _pWindow = nullptr;
+      }
+    }
+    void on(event::MainloopEvent*) override {
       SDL_Event event;
       if (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT) {
-          auto app = INJECT(Application);
+          auto app = getDependence<Application>();
           app->exit();
         }
       }
     }
-    void on(EventBus::BaseEvent<"quit">*)override {
-      std::cout << "quit" << std::endl;
+    SDL_Window* getGameWindow() {
+      return _pWindow;
     }
   };
 } // namespace lux::system

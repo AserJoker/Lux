@@ -10,6 +10,7 @@
 #include "system/Application.hpp"
 #include "system/EventBus.hpp"
 #include "system/Native.hpp"
+#include "system/Graphic.hpp"
 using namespace lux;
 
 int main(int argc, char* argv[]) {
@@ -23,9 +24,11 @@ int main(int argc, char* argv[]) {
   PROVIDE(system::EventBus);
   PROVIDE(system::Native);
   PROVIDE(system::Application);
+  PROVIDE(system::Graphic);
   try {
+    INJECT(system::Native);
+    INJECT(system::Graphic);
     auto app = INJECT(system::Application);
-    app->install<system::Native>();
     app->run();
     return 0;
   }

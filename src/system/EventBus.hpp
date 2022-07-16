@@ -21,24 +21,23 @@ namespace lux::system {
       static const char* getType() { return type.value; }
     };
     template <class T> class EventListener : public BaseEventListener {
+    protected:
+      core::Pointer<EventBus> _pEventBus;
     public:
       virtual void on(T* event) = 0;
       EventListener() {
-        auto bus = EventBus::getEventBus();
-        bus._addRef();
-        bus->addEventListener(T::getType(), this);
+        _pEventBus = INJECT(EventBus);
+        _pEventBus->addEventListener(T::getType(), this);
       }
       virtual ~EventListener() {
-        auto bus = EventBus::getEventBus();
-        bus->removeEventListener(T::getType(), this);
-        bus._release();
+        _pEventBus->removeEventListener(T::getType(), this);
       }
     };
-    template <class T> void emit(T* event) {
+    template <class T> void emit(T event) {
       auto listeners = _listeners[T::getType()];
       for (auto& _lis : listeners) {
         auto lis = (EventListener<T> *)_lis;
-        lis->on(event);
+        lis->on(&event);
       }
     }
     void addEventListener(const std::string& event, BaseEventListener* lis) {
@@ -55,10 +54,6 @@ namespace lux::system {
       auto list = _listeners[event];
       std::erase(list, lis);
       _listeners[event] = list;
-    }
-    static core::Pointer<EventBus> getEventBus() {
-      static core::Pointer<EventBus> bus = INJECT(EventBus);
-      return bus;
     }
   };
 } // namespace lux::system
