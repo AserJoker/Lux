@@ -46,10 +46,13 @@ int main(int argc, char* argv[]) {
 
   try {
     INJECT(system::INative);
-    INJECT(system::IGraphic);
+    auto graphic = INJECT(system::IGraphic);
     INJECT(system::IResource);
-    INJECT(system::IDocument);
+    auto doc = INJECT(system::IDocument);
     auto app = INJECT(system::Application);
+    auto img = element::ImageElement::create(graphic, "texture::demo");
+    auto root = doc->getRoot();
+    root->append(img);
     app->run();
     return 0;
   }

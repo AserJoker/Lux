@@ -33,7 +33,9 @@ namespace lux::element {
                 child = child->getNext();
             }
         }
-        void append(core::Pointer<Element> child) {
+        template<class T>
+        void append(T ele) {
+            core::Pointer<Element> child = ele.cast<Element>();
             child->_pParent = this;
             if (_pChildren == nullptr) {
                 _pChildren = child;
@@ -47,7 +49,9 @@ namespace lux::element {
             }
             child->onMounted();
         }
-        bool remove(core::Pointer<Element> child) {
+        template<class T>
+        bool remove(T ele) {
+            core::Pointer<Element> child = ele.cast<Element>();
             bool result = false;
             if (child == _pChildren) {
                 _pChildren = child->_pNext;
