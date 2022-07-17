@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<root>
+    <container width="${window.width}" height="${window.height}">
+        <image>texture::demo</image>
+        <font asset="font::demo" size="32">
+            <text color="0xff00ffff">hello world</text>
+        </font>
+    </container>
+</root>

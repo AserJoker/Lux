@@ -24,10 +24,18 @@ namespace lux::resource {
             auto R = INJECT(system::Resource);
             auto buf = R->load(token);
             auto img = INJECT(Image);
-            img->_pSurface = IMG_Load_RW(SDL_RWFromConstMem(buf->getBuffer<void>(), (int)buf->getSize()), 0);
+            img->_pSurface = IMG_Load_RW(SDL_RWFromConstMem(buf->getBuffer(), (int)buf->getSize()), 0);
             if (!img->_pSurface) {
                 throw SDL_ERROR;
             }
+            return img;
+        }
+        static core::Pointer<Image> create(SDL_Surface* surface) {
+            if (!surface) {
+                throw RUNTIME_ERROR("failed to create image");
+            }
+            auto img = INJECT(Image);
+            img->_pSurface = surface;
             return img;
         }
     };

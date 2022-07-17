@@ -17,7 +17,7 @@ namespace lux::resource {
         size_t getSize() {
             return _nSize;
         }
-        template<class T> T* getBuffer() {
+        template<class T = void> T* getBuffer() {
             return (T*)_pBuffer;
         }
         std::string toString() {
