@@ -11,7 +11,16 @@ namespace lux::element {
         Element* _pParent;
         std::string _szName;
     protected:
-        void setName(const std::string& name) { _szName = name; }
+        void setName(const std::string& name) {
+            if (!_szName.empty()) {
+                throw RUNTIME_ERROR("cannot reset element name");
+            }
+            if (name.empty()) {
+                throw RUNTIME_ERROR("element name must not be empty");
+            }
+            _szName = name;
+            Element::_indexed.insert(std::make_pair(name, this));
+        }
     public:
         static core::Pointer<Element> select(const std::string& name) {
             return Element::_indexed[name];
