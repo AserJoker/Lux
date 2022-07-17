@@ -1,6 +1,5 @@
 #ifndef _H_LUX_SYSTEM_APPLICATION_
 #define _H_LUX_SYSTEM_APPLICATION_
-#include "./interface/IComponent.hpp"
 #include "core/Object.hpp"
 #include "event/MainloopEvent.hpp"
 #include "core/EventBus.hpp"

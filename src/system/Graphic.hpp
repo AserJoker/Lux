@@ -5,6 +5,7 @@
 #include "interface/INative.hpp"
 #include "Application.hpp"
 #include "event/MainloopEvent.hpp"
+#include "event/RenderEvent.hpp"
 namespace lux::system {
     class Graphic :public IGraphic,
         public core::Dependence<INative>,
@@ -26,6 +27,7 @@ namespace lux::system {
         }
         void on(event::MainloopEvent*) override {
             SDL_RenderClear(_pRenderer);
+            _pEventBus->emit(event::RenderEvent());
             SDL_RenderPresent(_pRenderer);
         }
         SDL_Renderer* getRenderer() override {

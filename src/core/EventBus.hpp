@@ -21,16 +21,16 @@ namespace lux::core {
       static const char* getType() { return type.value; }
     };
     template <class T> class EventListener : public BaseEventListener {
-    protected:
-      core::Pointer<EventBus> _pEventBus;
+    private:
+      core::Pointer<EventBus> _pEventRef_EventBus;
     public:
       virtual void on(T* event) = 0;
       EventListener() {
-        _pEventBus = INJECT(EventBus);
-        _pEventBus->addEventListener(T::getType(), this);
+        _pEventRef_EventBus = INJECT(EventBus);
+        _pEventRef_EventBus->addEventListener(T::getType(), this);
       }
       virtual ~EventListener() {
-        _pEventBus->removeEventListener(T::getType(), this);
+        _pEventRef_EventBus->removeEventListener(T::getType(), this);
       }
     };
     template <class T> void emit(T event) {
