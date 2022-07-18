@@ -5,24 +5,24 @@
 #endif
 
 #include "core/Container.hpp"
-#include "core/Object.hpp"
 #include "core/EventBus.hpp"
+#include "core/Object.hpp"
 
 #include "system/Application.hpp"
-#include "system/Native.hpp"
-#include "system/Graphic.hpp"
-#include "system/Resource.hpp"
 #include "system/Document.hpp"
+#include "system/Graphic.hpp"
+#include "system/Native.hpp"
+#include "system/Resource.hpp"
 
 #include "resource/Buffer.hpp"
-#include "resource/Image.hpp"
 #include "resource/Font.hpp"
+#include "resource/Image.hpp"
 
 #include "element/Element.hpp"
-#include "element/RootElement.hpp"
 #include "element/ImageElement.hpp"
+#include "element/RootElement.hpp"
 using namespace lux;
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
 #if defined(_WIN32)
   // Set console code page to UTF-8 so console known how to interpret string
   // data
@@ -37,12 +37,16 @@ int main(int argc, char* argv[]) {
   PROVIDE(system::Resource);
   PROVIDE(system::Document);
 
-  core::Container::provide<resource::Buffer>(resource::Buffer::TOKEN, core::Container::PROTOTYPE);
-  core::Container::provide<resource::Image>(resource::Image::TOKEN, core::Container::PROTOTYPE);
-  core::Container::provide<resource::Font>(resource::Font::TOKEN, core::Container::PROTOTYPE);
+  core::Container::provide<resource::Buffer>(resource::Buffer::TOKEN,
+                                             core::Container::PROTOTYPE);
+  core::Container::provide<resource::Image>(resource::Image::TOKEN,
+                                            core::Container::PROTOTYPE);
+  core::Container::provide<resource::Font>(resource::Font::TOKEN,
+                                           core::Container::PROTOTYPE);
 
   PROVIDE(element::RootElement);
-  core::Container::provide<element::ImageElement>(element::ImageElement::TOKEN, core::Container::PROTOTYPE);
+  core::Container::provide<element::ImageElement>(element::ImageElement::TOKEN,
+                                                  core::Container::PROTOTYPE);
 
   try {
     INJECT(system::INative);
@@ -50,13 +54,15 @@ int main(int argc, char* argv[]) {
     INJECT(system::IResource);
     auto doc = INJECT(system::IDocument);
     auto app = INJECT(system::Application);
-    auto img = element::ImageElement::create(graphic, "texture::demo");
+    auto img = element::ImageElement::create(
+        graphic,
+        {{"asset", element::Element::PropType::create("texture::demo")},
+         {"visible", element::Element::PropType::create(true)}});
     auto root = doc->getRoot();
     root->append(img);
     app->run();
     return 0;
-  }
-  catch (std::exception& exp) {
+  } catch (std::exception &exp) {
     std::cout << exp.what() << std::endl;
     return -1;
   }

@@ -9,16 +9,14 @@ namespace lux::element {
     class ImageElement : public Element, public core::Dependence<system::IGraphic> {
     protected:
         SDL_Texture* _pTexture;
-        SDL_Rect _srcRect;
         SDL_Rect _dstRect;
-        SDL_RendererFlip _rendererFlip;
-        SDL_Point _ptCenter;
-        double _lfAngle;
         bool _isVisible;
     public:
         DEFINE_TOKEN(lux::element::ImageElement);
         ImageElement() {
             _pTexture = nullptr;
+            _dstRect = {0,0,0,0};
+            _isVisible = false;
         }
         ~ImageElement() override {
             if (_pTexture != nullptr) {
@@ -29,23 +27,65 @@ namespace lux::element {
             if (_pTexture != nullptr && _isVisible) {
                 auto graphic = getDependence<system::IGraphic>();
                 auto renderer = graphic->getRenderer();
-                SDL_RenderCopyEx(renderer, _pTexture, &_srcRect, &_dstRect, _lfAngle, &_ptCenter, _rendererFlip);
+                if(SDL_RenderCopy(renderer, _pTexture, nullptr, &_dstRect)!=0){
+                    throw SDL_ERROR;
+                }
             }
         }
-        static core::Pointer<ImageElement> create(core::Pointer<system::IGraphic> pGraphic, const std::string& token) {
-            auto img = resource::Image::create(token);
-            auto ele = INJECT(ImageElement);
-            auto surface = img->getSurface();
-            ele->_pTexture = SDL_CreateTextureFromSurface(pGraphic->getRenderer(), surface);
-            if (!ele->_pTexture) {
-                throw SDL_ERROR;
+        void setProp(const std::string& name,PropType value,const std::map<std::string,PropType>& props) override{
+            if(name=="asset"){
+                CHECK_PROP(name,value,STRING);
+                auto asset = value.toString();
+                auto image = resource::Image::create(asset);
+                auto surface = image->getSurface();
+                auto graphic = getDependence<system::IGraphic>();
+                if(_pTexture){
+                    SDL_DestroyTexture(_pTexture);
+                }
+                _pTexture = SDL_CreateTextureFromSurface(graphic->getRenderer(),surface);
+                if(!_pTexture){
+                    throw SDL_ERROR;
+                }
+                if(!props.contains("width")){
+                    _dstRect.w = surface->w;
+                }
+                if(!props.contains("height")){
+                    _dstRect.h = surface->h;
+                }
+                return;
             }
-            ele->_srcRect = {0,0,surface->w,surface->h};
-            ele->_dstRect = {0,0,surface->w,surface->h};
-            ele->_rendererFlip = SDL_FLIP_NONE;
-            ele->_isVisible = true;
-            ele->_ptCenter = {surface->w / 2,surface->h / 2};
-            ele->_lfAngle = 0;
+            if(name=="x"){
+                CHECK_PROP(name,value,NUMBER);
+                _dstRect.x = (int)value.toNumber();
+                return;
+            }
+            if(name=="y"){
+                CHECK_PROP(name,value,NUMBER);
+                _dstRect.y = (int)value.toNumber();
+                return;
+            }
+            if(name=="width"){
+                CHECK_PROP(name,value,NUMBER);
+                _dstRect.w = (int)value.toNumber();
+                return;
+            }
+            if(name=="height"){
+                CHECK_PROP(name,value,NUMBER);
+                _dstRect.h = (int)value.toNumber();
+                return;
+            }
+            if(name=="visible"){
+                CHECK_PROP(name,value,BOOLEAN);
+                _isVisible = value.toBoolean();
+                return;
+            }
+            Element::setProp(name,value,props);
+        }
+        static core::Pointer<ImageElement> create(core::Pointer<system::IGraphic> pGraphic, std::map<std::string,PropType> props) {
+            auto ele = INJECT(ImageElement);
+            for(auto& pair:props){
+                ele->setProp(pair.first,pair.second,props);
+            }
             return ele;
         }
     };

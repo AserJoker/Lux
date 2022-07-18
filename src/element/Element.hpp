@@ -2,15 +2,70 @@
 #define _H_LUX_ELEMENT_ELEMENT_
 #include "core/Object.hpp"
 #include <vector>
+#define CHECK_PROP(name,value,type) if(value.getType()!=PropType::type){throw new RUNTIME_ERROR(fmt::format("prop '{}' must be {}",name,#type));}
 namespace lux::element {
     class Element : public core::Object {
+    public:
+        class PropType{
+            public:
+                enum TYPE{
+                    STRING,NUMBER,BOOLEAN,EMPTY
+                };
+            private:
+                std::string _value;
+                TYPE _type;
+            public:
+                PropType():_value(""),_type(EMPTY){};
+                double toNumber(){
+                    return std::stod(_value);
+                }
+                std::string toString(){
+                    return _value;
+                }
+                bool toBoolean(){
+                    return _value=="true";
+                }
+                TYPE getType(){
+                    return _type;
+                }
+                template<class T> static PropType create(T value){
+                    throw RUNTIME_ERROR("unsupport props type");
+                }
+                template<> static PropType create<const char *>(const char * value){
+                    PropType prop;
+                    prop._value = value;
+                    prop._type = STRING;
+                    return prop;
+                }
+                template<> static PropType create<std::string>(std::string value){
+                    PropType prop;
+                    prop._value = value;
+                    prop._type = STRING;
+                    return prop;
+                }
+                template<> static PropType create<double>(double value){
+                    PropType prop;
+                    prop._value = fmt::format("{}",value);
+                    prop._type = NUMBER;
+                    return prop;
+                }
+                template<> static PropType create<bool>(bool value){
+                    PropType prop;
+                    prop._value = value?"true":"false";
+                    prop._type = BOOLEAN;
+                    return prop;
+                }
+                static PropType create(){
+                    PropType prop;
+                    return prop;
+                }
+        };
     private:
         static std::map<std::string, core::Pointer<Element>> _indexed;
         core::Pointer<Element> _pNext;
         core::Pointer<Element> _pChildren;
         Element* _pParent;
         std::string _szName;
-    protected:
         void setName(const std::string& name) {
             if (!_szName.empty()) {
                 throw RUNTIME_ERROR("cannot reset element name");
@@ -93,6 +148,14 @@ namespace lux::element {
                 child = child->_pNext;
             }
             return child;
+        }
+        virtual void setProp(const std::string& name,PropType value,const std::map<std::string,PropType>& props){
+            if(name=="name"){
+                CHECK_PROP(name,value,STRING);
+                setName(value.toString());
+                return;
+            }
+            throw RUNTIME_ERROR(fmt::format("unknown prop name: {}",name));
         }
     };
     std::map<std::string, core::Pointer<Element>> Element::_indexed;
