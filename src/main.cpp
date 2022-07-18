@@ -21,6 +21,8 @@
 #include "element/Element.hpp"
 #include "element/ImageElement.hpp"
 #include "element/RootElement.hpp"
+#include "element/SpriteElement.hpp"
+#include "element/ContainerElement.hpp"
 using namespace lux;
 int main(int argc, char *argv[]) {
 #if defined(_WIN32)
@@ -47,6 +49,10 @@ int main(int argc, char *argv[]) {
   PROVIDE(element::RootElement);
   core::Container::provide<element::ImageElement>(element::ImageElement::TOKEN,
                                                   core::Container::PROTOTYPE);
+  core::Container::provide<element::SpriteElement>(
+      element::SpriteElement::TOKEN, core::Container::PROTOTYPE);
+  core::Container::provide<element::ContainerElement>(
+      element::ContainerElement::TOKEN, core::Container::PROTOTYPE);
 
   try {
     INJECT(system::INative);
@@ -54,12 +60,6 @@ int main(int argc, char *argv[]) {
     INJECT(system::IResource);
     auto doc = INJECT(system::IDocument);
     auto app = INJECT(system::Application);
-    auto img = element::ImageElement::create(
-        graphic,
-        {{"asset", element::Element::PropType::create("texture::demo")},
-         {"visible", element::Element::PropType::create(true)}});
-    auto root = doc->getRoot();
-    root->append(img);
     app->run();
     return 0;
   } catch (std::exception &exp) {
