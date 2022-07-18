@@ -23,7 +23,7 @@ namespace lux::resource {
             auto R = INJECT(system::Resource);
             auto buf = R->load(szToken);
             auto font = INJECT(Font);
-            font->_pFont = TTF_OpenFontRW(SDL_RWFromConstMem(buf->getBuffer<void>(),(int) buf->getSize()), 0, nSize);
+            font->_pFont = TTF_OpenFontRW(SDL_RWFromMem(buf->getBuffer<void>(), buf->getSize()), 0, nSize);
             if (!font->_pFont) {
                 throw SDL_ERROR;
             }

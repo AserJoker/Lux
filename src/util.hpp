@@ -11,5 +11,8 @@ struct c_string {
     std::copy_n(str, N, value);
   }
   char value[N];
+  std::string toString() {
+    return std::string(value);
+  }
 };
 #endif
