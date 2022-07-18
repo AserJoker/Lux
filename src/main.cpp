@@ -56,9 +56,9 @@ int main(int argc, char *argv[]) {
 
   try {
     INJECT(system::INative);
-    auto graphic = INJECT(system::IGraphic);
+    INJECT(system::IGraphic);
     INJECT(system::IResource);
-    auto doc = INJECT(system::IDocument);
+    INJECT(system::IDocument);
     auto app = INJECT(system::Application);
     app->run();
     return 0;
