@@ -1,64 +1,55 @@
 #ifndef _H_LUX_ELEMENT_ELEMENT_
 #define _H_LUX_ELEMENT_ELEMENT_
 #include "core/Object.hpp"
+#include "core/Value.hpp"
 #include <vector>
-#define CHECK_PROP(name, value, type)                                          \
-  if (value.getType() != StateType::type) {                                     \
-    throw new RUNTIME_ERROR(fmt::format("prop '{}' must be {}", name, #type)); \
-  }
+
 namespace lux::element {
+  typedef const std::map<std::string,core::Pointer<core::Value>>& Props;
 class Element : public core::Object {
-public:
-  class StateType {
-  public:
-    enum TYPE { STRING, NUMBER, BOOLEAN, EMPTY };
-
-  private:
-    std::string _value;
-    TYPE _type;
-
-  public:
-    StateType() : _value(""), _type(EMPTY){};
-    double toNumber() { return std::stod(_value); }
-    std::string toString() { return _value; }
-    bool toBoolean() { return _value == "true"; }
-    TYPE getType() { return _type; }
-    StateType(bool val):_value(val?"true":"false"),_type(BOOLEAN){}
-    StateType(double val):_value(fmt::format("{}",val)),_type(NUMBER){}
-    StateType(int val):_value(fmt::format("{}",val)),_type(NUMBER){}
-    StateType(const std::string& val):_value(val),_type(STRING){}
-    StateType(const char * val):_value(val),_type(STRING){}
-  };
-
 private:
   static std::map<std::string, core::Pointer<Element>> _indexed;
   core::Pointer<Element> _pNext;
   core::Pointer<Element> _pChildren;
   Element *_pParent;
   std::string _szName;
-  void setName(const std::string &name) {
-    if (!_szName.empty()) {
-      throw RUNTIME_ERROR("cannot reset element name");
-    }
-    if (name.empty()) {
-      throw RUNTIME_ERROR("element name must not be empty");
-    }
-    _szName = name;
-    Element::_indexed.insert(std::make_pair(name, this));
-  }
+  std::map<std::string, core::Pointer<core::Object>> _ctx;
+
 protected:
-  virtual void setProp(const std::string &name, StateType value) {
-    if (name == "name") {
-      CHECK_PROP(name, value, STRING);
-      setName(value.toString());
-      return;
-    }
-    throw RUNTIME_ERROR(fmt::format("unknown prop name: {}", name));
+  template <class T>
+  void provide(const std::string &name, core::Pointer<T> value) {
+    _ctx[name] = value.cast<core::Object>();
   }
+  template <class T> core::Pointer<T> inject(const std::string &name) {
+    auto parent = _pParent;
+    while (parent) {
+      if (parent->_ctx.contains(name)) {
+        return parent->_ctx[name].cast<T>();
+      }
+      parent = parent->_pParent;
+    }
+    return nullptr;
+  }
+  virtual void
+  setProps(const std::map<std::string, core::Pointer<core::Value>> &props) {
+    if(props.contains("name")){
+      auto name = props.at("name");
+      if(name->getClassName()!=core::String::TOKEN){
+        throw RUNTIME_ERROR("prop 'name' must be string");
+      }
+      _szName = name.cast<core::String>()->getValue();
+      Element::_indexed.insert({_szName,this});
+    }
+  }
+  virtual void setState(const std::string &name, core::Pointer<core::Value>){
+    throw RUNTIME_ERROR(fmt::format("unknown state '{}'",name));
+  };
+
 public:
   static core::Pointer<Element> select(const std::string &name) {
     return Element::_indexed[name];
   }
+  Element() { _pParent = nullptr; }
   ~Element() override {
     if (!_szName.empty()) {
       Element::_indexed.erase(_szName);
@@ -124,16 +115,26 @@ public:
     }
     return child;
   }
-  template <class T>
-  static core::Pointer<T> create(std::map<std::string, StateType> props) {
-    auto ele = INJECT(T).cast<Element>();
-    for (auto &pair : props) {
-      ele->setProp(pair.first, pair.second);
-    }
-    return ele.cast<T>();
+  void setState(const std::string &name, int value) {
+    setState(name, core::Integer::create(value));
   }
-  virtual void setState(const std::string& name,StateType value){
-    throw RUNTIME_ERROR(fmt::format("unknown state name: {}", name));
+  void setState(const std::string &name, double value) {
+    setState(name, core::Double::create(value));
+  }
+  void setState(const std::string &name, const char *value) {
+    setState(name, core::String::create(value));
+  }
+  void setState(const std::string &name, std::string& value) {
+    setState(name, core::String::create(value));
+  }
+  void setState(const std::string &name, bool value) {
+    setState(name, core::Boolean::create(value));
+  }
+  template<class T>
+  static core::Pointer<T> create(const std::map<std::string,core::Pointer<core::Value>>& props){
+    auto ele = INJECT(T).cast<Element>();
+    ele->setProps(props);
+    return ele.cast<T>();
   }
 };
 std::map<std::string, core::Pointer<Element>> Element::_indexed;

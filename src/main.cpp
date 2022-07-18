@@ -7,6 +7,7 @@
 #include "core/Container.hpp"
 #include "core/EventBus.hpp"
 #include "core/Object.hpp"
+#include "core/Value.hpp"
 
 #include "system/Application.hpp"
 #include "system/Document.hpp"
@@ -23,6 +24,8 @@
 #include "element/RootElement.hpp"
 #include "element/SpriteElement.hpp"
 #include "element/ContainerElement.hpp"
+#include "element/FontElement.hpp"
+#include "element/TextElement.hpp"
 using namespace lux;
 int main(int argc, char *argv[]) {
 #if defined(_WIN32)
@@ -39,6 +42,11 @@ int main(int argc, char *argv[]) {
   PROVIDE(system::Resource);
   PROVIDE(system::Document);
 
+  core::Container::provide<core::Boolean>(core::Boolean::TOKEN,core::Container::PROTOTYPE);
+  core::Container::provide<core::Integer>(core::Integer::TOKEN,core::Container::PROTOTYPE);
+  core::Container::provide<core::Double>(core::Double::TOKEN,core::Container::PROTOTYPE);
+  core::Container::provide<core::String>(core::String::TOKEN,core::Container::PROTOTYPE);
+
   core::Container::provide<resource::Buffer>(resource::Buffer::TOKEN,
                                              core::Container::PROTOTYPE);
   core::Container::provide<resource::Image>(resource::Image::TOKEN,
@@ -53,13 +61,22 @@ int main(int argc, char *argv[]) {
       element::SpriteElement::TOKEN, core::Container::PROTOTYPE);
   core::Container::provide<element::ContainerElement>(
       element::ContainerElement::TOKEN, core::Container::PROTOTYPE);
+  core::Container::provide<element::FontElement>(
+      element::FontElement::TOKEN, core::Container::PROTOTYPE);
+  core::Container::provide<element::TextElement>(
+      element::TextElement::TOKEN, core::Container::PROTOTYPE);
 
   try {
     INJECT(system::INative);
     INJECT(system::IGraphic);
     INJECT(system::IResource);
-    INJECT(system::IDocument);
+    auto doc = INJECT(system::IDocument);
     auto app = INJECT(system::Application);
+    auto root = doc->getRoot();
+    auto img = element::Element::create<element::ImageElement>({
+      {"asset",core::String::create("texture::demo")}
+    });
+    root->append(img);
     app->run();
     return 0;
   } catch (std::exception &exp) {
