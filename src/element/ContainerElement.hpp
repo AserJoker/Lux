@@ -38,14 +38,15 @@ public:
       if (!_pTexture) {
         throw SDL_ERROR;
       }
+      SDL_SetTextureBlendMode(_pTexture,SDL_BLENDMODE_BLEND);
     }
     if(SDL_SetRenderTarget(graphic->getRenderer(), _pTexture)!=0){
         throw SDL_ERROR;
     }
     SDL_RenderClear(graphic->getRenderer());
-    Element::onUpdate();
+    Element::onUpdate();// render children
     SDL_SetRenderTarget(graphic->getRenderer(), nullptr);
-    SpriteElement::onUpdate();
+    SpriteElement::onUpdate(); // render self
   }
 };
 } // namespace lux::element

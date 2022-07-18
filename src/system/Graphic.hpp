@@ -19,6 +19,7 @@ namespace lux::system {
             if (!_pRenderer) {
                 throw SDL_ERROR;
             }
+            SDL_SetRenderDrawBlendMode(_pRenderer,SDL_BLENDMODE_BLEND);
         }
         ~Graphic() override {
             if (_pRenderer) {

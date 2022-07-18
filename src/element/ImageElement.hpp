@@ -13,6 +13,7 @@ protected:
   int _nWidth;
   int _nHeight;
   bool _isVisible;
+  Uint8 _u8Opacity;
   void setProp(const std::string &name, StateType value) override {
     if (name == "asset") {
       CHECK_PROP(name, value, STRING);
@@ -26,7 +27,7 @@ protected:
       }
       _nWidth = surface->w;
       _nHeight = surface->h;
-      _dstRect = {0,0,_nWidth,_nHeight};
+      _dstRect = {0, 0, _nWidth, _nHeight};
       return;
     }
     Element::setProp(name, value);
@@ -40,6 +41,7 @@ public:
     _isVisible = false;
     _nWidth = 0;
     _nHeight = 0;
+    _u8Opacity = 255;
   }
   ~ImageElement() override {
     if (_pTexture != nullptr) {
@@ -50,6 +52,7 @@ public:
     if (_pTexture != nullptr && _isVisible) {
       auto graphic = getDependence<system::IGraphic>();
       auto renderer = graphic->getRenderer();
+      SDL_SetTextureAlphaMod(_pTexture, _u8Opacity);
       if (SDL_RenderCopy(renderer, _pTexture, nullptr, &_dstRect) != 0) {
         throw SDL_ERROR;
       }
@@ -79,6 +82,11 @@ public:
     if (name == "visible") {
       CHECK_PROP(name, value, BOOLEAN);
       _isVisible = value.toBoolean();
+      return;
+    }
+    if (name == "opacity") {
+      CHECK_PROP(name, value, NUMBER);
+      _u8Opacity = (Uint8)value.toNumber();
       return;
     }
     Element::setState(name, value);
