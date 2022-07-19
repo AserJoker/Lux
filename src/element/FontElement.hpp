@@ -13,7 +13,7 @@ namespace lux::element {
       if (size == nullptr || asset == nullptr) {
         throw RUNTIME_ERROR("Invalid property");
       }
-      _pFont = resource::Font::create(asset.cast<core::String>()->getValue().c_str(), size.cast<core::Integer>()->getValue());
+      _pFont = resource::Font::create(asset.cast<core::RefValue<std::string>>()->getValue().c_str(), size.cast<core::RefValue<int>>()->getValue());
       provide("$font", _pFont);
       Element::setProps(props);
     }

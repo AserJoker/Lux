@@ -4,7 +4,7 @@
 #include "core/Object.hpp"
 #include "system/Resource.hpp"
 namespace lux::resource {
-    class Image :public core::Object {
+    class Image :public core::Object,public core::Dependence<system::Resource> {
     private:
         SDL_Surface* _pSurface;
     public:

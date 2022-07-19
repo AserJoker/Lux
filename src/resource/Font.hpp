@@ -2,10 +2,11 @@
 #define _LUX_RESOURCE_FONT_
 #include <SDL_ttf.h>
 #include "core/Object.hpp"
+#include "core/Dependence.hpp"
 #include "system/Resource.hpp"
 #include "Image.hpp"
 namespace lux::resource {
-    class Font : public core::Object {
+    class Font : public core::Object,public core::Dependence<system::Resource> {
     private:
         TTF_Font* _pFont;
     public:
@@ -16,6 +17,7 @@ namespace lux::resource {
         ~Font() override {
             if (_pFont != nullptr) {
                 TTF_CloseFont(_pFont);
+                _pFont = nullptr;
             }
         }
         TTF_Font* getFont() { return _pFont; }
@@ -23,7 +25,7 @@ namespace lux::resource {
             auto R = INJECT(system::Resource);
             auto buf = R->load(szToken);
             auto font = INJECT(Font);
-            font->_pFont = TTF_OpenFontRW(SDL_RWFromMem(buf->getBuffer<void>(), buf->getSize()), 0, nSize);
+            font->_pFont = TTF_OpenFontRW(SDL_RWFromConstMem(buf->getBuffer<void>(),(int)buf->getSize()), 0, nSize);
             if (!font->_pFont) {
                 throw SDL_ERROR;
             }

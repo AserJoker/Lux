@@ -42,11 +42,6 @@ int main(int argc, char* argv[]) {
   PROVIDE(system::Resource);
   PROVIDE(system::Document);
 
-  core::Container::provide<core::Boolean>(core::Boolean::TOKEN, core::Container::PROTOTYPE);
-  core::Container::provide<core::Integer>(core::Integer::TOKEN, core::Container::PROTOTYPE);
-  core::Container::provide<core::Double>(core::Double::TOKEN, core::Container::PROTOTYPE);
-  core::Container::provide<core::String>(core::String::TOKEN, core::Container::PROTOTYPE);
-
   core::Container::provide<resource::Buffer>(resource::Buffer::TOKEN,
     core::Container::PROTOTYPE);
   core::Container::provide<resource::Image>(resource::Image::TOKEN,
@@ -78,7 +73,7 @@ int main(int argc, char* argv[]) {
       std::pair<std::string,core::Pointer<core::Value>>({"height", core::value(100)}),
       });
     auto img = element::Element::create<element::SpriteElement>({
-      {"asset",core::value("texture::demo")}
+      {"asset",core::value(std::string("texture::demo"))}
       });
     auto font = element::Element::create<element::FontElement>({
       {"asset",core::value("font::demo")},
@@ -86,10 +81,12 @@ int main(int argc, char* argv[]) {
       });
     auto text = element::Element::create<element::TextElement>({
       {"text",core::value("hello world")},
-        {"color",core::value(0xff00ffff)},
+        {"color",core::value(0xff000077)},
       });
     font->append(text);
-    root->append(font);
+    container->append(img);
+    container->append(font);
+    root->append(container);
     app->run();
     return 0;
   }

@@ -33,11 +33,8 @@ namespace lux::element {
         virtual void
             setProps(std::map<std::string, core::Pointer<core::Value>> props) {
             if (props.contains("name")) {
-                auto name = props.at("name");
-                if (name->getClassName() != core::String::TOKEN) {
-                    throw RUNTIME_ERROR("prop 'name' must be string");
-                }
-                _szName = name.cast<core::String>()->getValue();
+                auto name = props.at("name").cast<core::RefValue<std::string>>();
+                _szName = name->getValue();
                 Element::_indexed.insert({_szName,this});
             }
         }
@@ -74,11 +71,11 @@ namespace lux::element {
                 _pChildren = child;
             }
             else {
-                auto child = _pChildren;
-                while (child->_pNext != nullptr) {
-                    child = child->_pNext;
+                auto prev = _pChildren;
+                while (prev->_pNext != nullptr) {
+                    prev = prev->_pNext;
                 }
-                child->_pNext = child;
+                prev->_pNext = child;
             }
             child->onMounted();
         }
@@ -117,19 +114,8 @@ namespace lux::element {
             }
             return child;
         }
-        void setState(const std::string& name, int value) {
-            setStateValue(name, core::value(value));
-        }
-        void setState(const std::string& name, double value) {
-            setStateValue(name, core::value(value));
-        }
-        void setState(const std::string& name, const char* value) {
-            setStateValue(name, core::value(value));
-        }
-        void setState(const std::string& name, std::string& value) {
-            setStateValue(name, core::value(value));
-        }
-        void setState(const std::string& name, bool value) {
+        template<class T>
+        void setState(const std::string& name, T value) {
             setStateValue(name, core::value(value));
         }
         template<class T>

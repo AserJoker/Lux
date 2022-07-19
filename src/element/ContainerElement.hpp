@@ -14,14 +14,14 @@ namespace lux::element {
       if (width == nullptr || height == nullptr) {
         throw RUNTIME_ERROR("ContainerElement: width and height must not be nullptr");
       }
-      _nWidth = width.cast<core::Integer>()->getValue();
-      _nHeight = height.cast<core::Integer>()->getValue();
+      _nWidth = width.cast<core::RefValue<int>>()->getValue();
+      _nHeight = height.cast<core::RefValue<int>>()->getValue();
       _dstRect = {0,0,_nWidth, _nHeight};
       _srcRect = {0,0,_nWidth,_nHeight};
       _ptCenter = {_nWidth / 2,_nHeight / 2};
       _lfAngle = 0;
       auto graphic = INJECT(system::IGraphic);
-      _pTexture = SDL_CreateTexture(graphic->getRenderer(), SDL_PIXELFORMAT_ARGB32, SDL_TEXTUREACCESS_TARGET, _nWidth, _nHeight);
+      _pTexture = SDL_CreateTexture(graphic->getRenderer(), SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_TARGET, _nWidth, _nHeight);
       if (!_pTexture) {
         throw SDL_ERROR;
       }

@@ -10,19 +10,13 @@ namespace lux::element {
     void setProps(Props props) override {
       auto text = props["text"];
       auto color = props["color"];
-      if (text == nullptr || text->getClassName() != core::String::TOKEN) {
-        throw RUNTIME_ERROR("Invalid text property");
-      }
-      if (color == nullptr || color->getClassName() != core::Integer::TOKEN) {
-        throw RUNTIME_ERROR("Invalid color property");
-      }
-      Uint32 uColor = (Uint32)color.cast<core::Integer>()->getValue();
-      Uint8 r = uColor & 0xff;
-      Uint8 g = uColor >> 8 & 0xff;
-      Uint8 b = uColor >> 16 & 0xff;
-      Uint8 a = uColor >> 24 & 0xff;
+      Uint32 uColor = (Uint32)color.cast<core::RefValue<unsigned>>()->getValue();
+      Uint8 a = uColor & 0xff;
+      Uint8 b = uColor >> 8 & 0xff;
+      Uint8 g = uColor >> 16 & 0xff;
+      Uint8 r = uColor >> 24 & 0xff;
       _color = {r, g, b, a};
-      _text = text.cast<core::String>()->getValue();
+      _text = text.cast<core::RefValue<std::string>>()->getValue();
 
       Element::setProps(props);
     }
@@ -37,6 +31,7 @@ namespace lux::element {
       auto sur = img->getSurface();
       auto graphic = INJECT(system::IGraphic);
       _pTexture = SDL_CreateTextureFromSurface(graphic->getRenderer(), sur);
+      SDL_SetTextureBlendMode(_pTexture,SDL_BLENDMODE_BLEND);
       _nWidth = sur->w;
       _nHeight = sur->h;
       _srcRect = {0,0,_nWidth,_nHeight};

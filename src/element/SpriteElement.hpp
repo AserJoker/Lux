@@ -15,67 +15,42 @@ namespace lux::element {
     }
     void setStateValue(const std::string& name, core::Pointer<core::Value> value) override {
       if (name == "srcX") {
-        if (value->getClassName() != core::Integer::TOKEN) {
-          throw RUNTIME_ERROR("The 'srcX' property must be a number");
-        }
-        auto srcX = value.cast<core::Integer>()->getValue();
+        auto srcX = value.cast<core::RefValue<int>>()->getValue();
         _srcRect.x = srcX;
         return;
       }
       if (name == "srcY") {
-        if (value->getClassName() != core::Integer::TOKEN) {
-          throw RUNTIME_ERROR("The 'srcY' property must be a number");
-        }
-        auto srcY = value.cast<core::Integer>()->getValue();
+        auto srcY = value.cast<core::RefValue<int>>()->getValue();
         _srcRect.y = srcY;
         return;
       }
       if (name == "srcWidth") {
-        if (value->getClassName() != core::Integer::TOKEN) {
-          throw RUNTIME_ERROR("The 'srcWidth' property must be a number");
-        }
-        auto srcWidth = value.cast<core::Integer>()->getValue();
+        auto srcWidth = value.cast<core::RefValue<int>>()->getValue();
         _srcRect.w = srcWidth;
         return;
       }
       if (name == "srcHeight") {
-        if (value->getClassName() != core::Integer::TOKEN) {
-          throw RUNTIME_ERROR("The 'srcHeight' property must be a number");
-        }
-        auto srcHeight = value.cast<core::Integer>()->getValue();
+        auto srcHeight = value.cast<core::RefValue<int>>()->getValue();
         _srcRect.h = srcHeight;
         return;
       }
       if (name == "rotationX") {
-        if (value->getClassName() != core::Integer::TOKEN) {
-          throw RUNTIME_ERROR("The 'rotationX' property must be a number");
-        }
-        auto rotationX = value.cast<core::Integer>()->getValue();
+        auto rotationX = value.cast<core::RefValue<int>>()->getValue();
         _ptCenter.x = rotationX;
         return;
       }
       if (name == "rotationY") {
-        if (value->getClassName() != core::Integer::TOKEN) {
-          throw RUNTIME_ERROR("The 'rotationY' property must be a number");
-        }
-        auto rotationY = value.cast<core::Integer>()->getValue();
+        auto rotationY = value.cast<core::RefValue<int>>()->getValue();
         _ptCenter.y = rotationY;
         return;
       }
       if (name == "angle") {
-        if (value->getClassName() != core::Double::TOKEN) {
-          std::cout << core::Double::TOKEN << std::endl;
-          throw RUNTIME_ERROR("The 'angle' property must be a number");
-        }
-        auto angle = value.cast<core::Double>()->getValue();
+        auto angle = value.cast<core::RefValue<int>>()->getValue();
         _lfAngle = angle;
         return;
       }
       if (name == "flip") {
-        if (value->getClassName() != core::Integer::TOKEN) {
-          throw RUNTIME_ERROR("The 'flip' property must be a number");
-        }
-        auto flip = value.cast<core::Integer>()->getValue();
+        auto flip = value.cast<core::RefValue<int>>()->getValue();
         _rendererFlip = (SDL_RendererFlip)flip;
         return;
       }

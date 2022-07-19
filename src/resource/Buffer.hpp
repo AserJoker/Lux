@@ -26,7 +26,7 @@ namespace lux::resource {
         }
         static core::Pointer<Buffer> create(size_t nSize) {
             auto buf = INJECT(Buffer);
-            buf->_pBuffer = ::operator new(nSize);
+            buf->_pBuffer = malloc(nSize); //::operator new(nSize+1);
             buf->_nSize = nSize;
             return buf;
         }
