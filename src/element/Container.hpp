@@ -1,21 +1,21 @@
 #ifndef _H_LUX_ELEMENT_CONTAINER_ELEMENT_
 #define _H_LUX_ELEMENT_CONTAINER_ELEMENT_
-#include "SpriteElement.hpp"
+#include "Sprite.hpp"
 namespace lux::element {
-  class ContainerElement : public SpriteElement {
+  class Container : public Sprite {
   protected:
     void setProps(Props props) override {
       auto width = props["width"];
       auto height = props["height"];
       auto access = props["access"];
-      if (access != nullptr) {
-        throw RUNTIME_ERROR("ContainerElement cannot set access property");
+      if (!access.empty()) {
+        throw RUNTIME_ERROR("Container cannot set access property");
       }
-      if (width == nullptr || height == nullptr) {
-        throw RUNTIME_ERROR("ContainerElement: width and height must not be nullptr");
+      if (width.empty() || height.empty()) {
+        throw RUNTIME_ERROR("Container: width and height must not be nullptr");
       }
-      _nWidth = width.cast<core::RefValue<int>>()->getValue();
-      _nHeight = height.cast<core::RefValue<int>>()->getValue();
+      _nWidth = std::stoi(width);
+      _nHeight = std::stoi(height);
       _dstRect = {0,0,_nWidth, _nHeight};
       _srcRect = {0,0,_nWidth,_nHeight};
       _ptCenter = {_nWidth / 2,_nHeight / 2};
@@ -31,13 +31,13 @@ namespace lux::element {
       Element::setProps(props);
     }
   public:
-    DEFINE_TOKEN(lux::element::ContainerElement);
+    DEFINE_TOKEN(lux::element::Container);
     void onUpdate() override {
       auto graphic = INJECT(system::IGraphic);
       SDL_SetRenderTarget(graphic->getRenderer(), _pTexture);
       Element::onUpdate();
       SDL_SetRenderTarget(graphic->getRenderer(), nullptr);
-      SpriteElement::onUpdate();
+      Sprite::onUpdate();
     }
   };
 } // namespace lux::element

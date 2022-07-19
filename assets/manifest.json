@@ -13,5 +13,6 @@
     },
     "tile":{
         "grass":"tile/grass.json"
-    }
+    },
+    "document":"document/index.xml"
 }

@@ -1,19 +1,22 @@
 #ifndef _H_LUX_ELEMENT_ELEMENT_
 #define _H_LUX_ELEMENT_ELEMENT_
+#include "core/Context.hpp"
+#include "core/Dependence.hpp"
 #include "core/Object.hpp"
 #include "core/Value.hpp"
 #include <vector>
 
 namespace lux::element {
-typedef std::map<std::string, core::Pointer<core::Value>> Props;
+typedef std::map<std::string, std::string> Props;
 class Element : public core::Object {
 private:
-  static std::map<std::string, core::Pointer<Element>> _indexed;
+  // static std::map<std::string, core::Pointer<Element>> _indexed;
   core::Pointer<Element> _pNext;
   core::Pointer<Element> _pChildren;
   Element *_pParent;
   std::string _szName;
   std::map<std::string, core::Pointer<core::Object>> _ctx;
+  core::Pointer<core::Context> _pContext;
 
 protected:
   template <class T>
@@ -30,12 +33,21 @@ protected:
     }
     return nullptr;
   }
-  virtual void
-  setProps(std::map<std::string, core::Pointer<core::Value>> props) {
+  virtual void setProps(Props props) {
     if (props.contains("name")) {
-      auto name = props.at("name").cast<core::RefValue<std::string>>();
-      _szName = name->getValue();
-      Element::_indexed.insert({_szName, this});
+      _szName = props.at("name");
+      auto indexed =
+          _pContext->getContext<std::map<std::string, core::Pointer<Element>>>(
+              "element#indexed");
+      if (indexed == nullptr) {
+        _pContext->setContext<std::map<std::string, core::Pointer<Element>>>(
+            "element#indexed", {});
+        indexed =
+            _pContext
+                ->getContext<std::map<std::string, core::Pointer<Element>>>(
+                    "element#indexed");
+      }
+      indexed->getValue().insert({_szName, this});
     }
   }
   virtual void setStateValue(const std::string &name,
@@ -45,30 +57,43 @@ protected:
   bool _isMounted;
 
 public:
+  DEFINE_TOKEN(lux::element::Element);
   static core::Pointer<Element> select(const std::string &name) {
-    return Element::_indexed[name];
+    auto context = INJECT(core::Context);
+    auto indexed =
+        context->getContext<std::map<std::string, core::Pointer<Element>>>(
+            "element#indexed");
+    if (indexed != nullptr) {
+      return indexed->getValue()[name];
+    }
+    return nullptr;
   }
   Element() {
     _pParent = nullptr;
     _isMounted = false;
+    _pContext = INJECT(core::Context);
   }
   ~Element() override {
+    auto indexed =
+        _pContext->getContext<std::map<std::string, core::Pointer<Element>>>(
+            "element#indexed");
     if (!_szName.empty()) {
-      Element::_indexed.erase(_szName);
+      indexed->getValue().erase(_szName);
     }
   }
+
   core::Pointer<Element> getNext() const { return _pNext; }
   core::Pointer<Element> getParent() const { return _pParent; }
   core::Pointer<Element> getChildren() const { return _pChildren; }
   virtual void onMounted() {}
   virtual void onUnmounted() {}
   virtual void onUpdate() {
-    if (!_isMounted) {
-      onMounted();
-      _isMounted = true;
-    }
     auto child = _pChildren;
     while (child != nullptr) {
+      if (!child->_isMounted) {
+        child->onMounted();
+        child->_isMounted = true;
+      }
       child->onUpdate();
       child = child->getNext();
     }
@@ -124,14 +149,19 @@ public:
   template <class T> void setState(const std::string &name, T value) {
     setStateValue(name, core::value(value));
   }
-  template <class T>
-  static core::Pointer<T>
-  create(const std::map<std::string, core::Pointer<core::Value>> &props) {
+  template <class T> static core::Pointer<T> create(const Props &props) {
     auto ele = INJECT(T).cast<Element>();
     ele->setProps(props);
     return ele.cast<T>();
   }
+  static core::Pointer<element::Element> create(const std::string &token,
+                                                const Props &props) {
+    auto ele = core::Container::inject<element::Element>(token);
+    if (ele != nullptr) {
+      ele->setProps(props);
+    }
+    return ele;
+  }
 };
-std::map<std::string, core::Pointer<Element>> Element::_indexed;
 } // namespace lux::element
 #endif

@@ -70,7 +70,8 @@
         "list": "cpp",
         "codecvt": "cpp",
         "deque": "cpp",
-        "stack": "cpp"
+        "stack": "cpp",
+        "any": "cpp"
     },
     "C_Cpp.clang_format_fallbackStyle": "LLVM"
 }

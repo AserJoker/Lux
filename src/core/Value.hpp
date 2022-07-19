@@ -11,7 +11,7 @@ namespace lux::core {
   public:
     DEFINE_TOKEN(lux::core::RefValue);
     void setValue(T val) { _value = val; }
-    T getValue() { return _value; }
+    T& getValue() { return _value; }
 
   };
   template <class T>  core::Pointer<Value> value(T val) {

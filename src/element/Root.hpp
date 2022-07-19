@@ -2,9 +2,9 @@
 #define _LUX_ELEMENT_ROOT_ELEMENT_
 #include "Element.hpp"
 namespace lux::element {
-    class RootElement : public Element {
+    class Root : public Element {
     public:
-        DEFINE_TOKEN(lux::element::RootElement);
+        DEFINE_TOKEN(lux::element::Root);
     };
 } // namespace lux::element
 

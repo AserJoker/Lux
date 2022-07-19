@@ -1,8 +1,8 @@
 #ifndef _H_LUX_ELEMENT_TEXT_ELEMENT_
 #define _H_LUX_ELEMENT_TEXT_ELEMENT_
-#include "SpriteElement.hpp"
+#include "Sprite.hpp"
 namespace lux::element {
-  class TextElement : public SpriteElement {
+  class Text : public Sprite {
   private:
     SDL_Color _color;
     std::string _text;
@@ -10,24 +10,24 @@ namespace lux::element {
     void setProps(Props props) override {
       auto text = props["text"];
       auto color = props["color"];
-      Uint32 uColor = (Uint32)color.cast<core::RefValue<unsigned>>()->getValue();
+      Uint32 uColor = (Uint32)std::stoul(color,nullptr,16);
       Uint8 a = uColor & 0xff;
       Uint8 b = uColor >> 8 & 0xff;
       Uint8 g = uColor >> 16 & 0xff;
       Uint8 r = uColor >> 24 & 0xff;
       _color = {r, g, b, a};
-      _text = text.cast<core::RefValue<std::string>>()->getValue();
+      _text = text;
 
       Element::setProps(props);
     }
   public:
-    DEFINE_TOKEN(lux::element::TextElement);
+    DEFINE_TOKEN(lux::element::Text);
     void onMounted() override {
-      auto font = resource::Font::create("font::demo", 32);
+      auto font = inject<resource::Font>("$font");
       if (font == nullptr) {
         throw RUNTIME_ERROR("Could not get font");
       }
-      auto img = font->createImage("hello world", _color);
+      auto img = font->createImage(_text.c_str(), _color);
       auto sur = img->getSurface();
       auto graphic = INJECT(system::IGraphic);
       _pTexture = SDL_CreateTextureFromSurface(graphic->getRenderer(), sur);

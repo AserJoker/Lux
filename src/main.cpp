@@ -8,6 +8,7 @@
 #include "core/EventBus.hpp"
 #include "core/Object.hpp"
 #include "core/Value.hpp"
+#include "core/Context.hpp"
 
 #include "system/Application.hpp"
 #include "system/Document.hpp"
@@ -20,12 +21,12 @@
 #include "resource/Image.hpp"
 
 #include "element/Element.hpp"
-#include "element/ImageElement.hpp"
-#include "element/RootElement.hpp"
-#include "element/SpriteElement.hpp"
-#include "element/ContainerElement.hpp"
-#include "element/FontElement.hpp"
-#include "element/TextElement.hpp"
+#include "element/Image.hpp"
+#include "element/Root.hpp"
+#include "element/Sprite.hpp"
+#include "element/Container.hpp"
+#include "element/Font.hpp"
+#include "element/Text.hpp"
 using namespace lux;
 int main(int argc, char* argv[]) {
 #if defined(_WIN32)
@@ -36,6 +37,8 @@ int main(int argc, char* argv[]) {
   setvbuf(stdout, nullptr, _IOFBF, 1000);
 #endif
   PROVIDE(core::EventBus);
+  PROVIDE(core::Context);
+
   PROVIDE(system::Native);
   PROVIDE(system::Application);
   PROVIDE(system::Graphic);
@@ -49,44 +52,26 @@ int main(int argc, char* argv[]) {
   core::Container::provide<resource::Font>(resource::Font::TOKEN,
     core::Container::PROTOTYPE);
 
-  PROVIDE(element::RootElement);
-  core::Container::provide<element::ImageElement>(element::ImageElement::TOKEN,
+  PROVIDE(element::Root);
+  core::Container::provide<element::Element>(element::Element::TOKEN,
     core::Container::PROTOTYPE);
-  core::Container::provide<element::SpriteElement>(
-    element::SpriteElement::TOKEN, core::Container::PROTOTYPE);
-  core::Container::provide<element::ContainerElement>(
-    element::ContainerElement::TOKEN, core::Container::PROTOTYPE);
-  core::Container::provide<element::FontElement>(
-    element::FontElement::TOKEN, core::Container::PROTOTYPE);
-  core::Container::provide<element::TextElement>(
-    element::TextElement::TOKEN, core::Container::PROTOTYPE);
+  core::Container::provide<element::Image>(element::Image::TOKEN,
+    core::Container::PROTOTYPE);
+  core::Container::provide<element::Sprite>(
+    element::Sprite::TOKEN, core::Container::PROTOTYPE);
+  core::Container::provide<element::Container>(
+    element::Container::TOKEN, core::Container::PROTOTYPE);
+  core::Container::provide<element::Font>(
+    element::Font::TOKEN, core::Container::PROTOTYPE);
+  core::Container::provide<element::Text>(
+    element::Text::TOKEN, core::Container::PROTOTYPE);
 
   try {
     INJECT(system::INative);
     INJECT(system::IGraphic);
     INJECT(system::IResource);
-    auto doc = INJECT(system::IDocument);
+    INJECT(system::IDocument);
     auto app = INJECT(system::Application);
-    auto root = doc->getRoot();
-    auto container = element::Element::create<element::ContainerElement>({
-      std::pair<std::string,core::Pointer<core::Value>>({"width", core::value(100)}),
-      std::pair<std::string,core::Pointer<core::Value>>({"height", core::value(100)}),
-      });
-    auto img = element::Element::create<element::SpriteElement>({
-      {"asset",core::value(std::string("texture::demo"))}
-      });
-    auto font = element::Element::create<element::FontElement>({
-      {"asset",core::value("font::demo")},
-      {"size",core::value(32)}
-      });
-    auto text = element::Element::create<element::TextElement>({
-      {"text",core::value("hello world")},
-        {"color",core::value(0xff000077)},
-      });
-    font->append(text);
-    container->append(img);
-    container->append(font);
-    root->append(container);
     app->run();
     return 0;
   }

@@ -6,7 +6,7 @@
 #include "system/interface/IGraphic.hpp"
 #include <SDL.h>
 namespace lux::element {
-    class ImageElement : public Element, public core::Dependence<system::IGraphic> {
+    class Image : public Element, public core::Dependence<system::IGraphic> {
     protected:
         SDL_Texture* _pTexture;
         SDL_Rect _dstRect;
@@ -14,12 +14,11 @@ namespace lux::element {
         int _nHeight;
         Uint8 _uOpacity;
         void setProps(Props props) {
-            auto asset = props["asset"].cast<core::RefValue<std::string>>();
-            if (asset == nullptr ) {
+            auto asset = props["asset"];
+            if (asset.empty()) {
                 throw RUNTIME_ERROR("prop 'asset' must be string");
             }
-            auto assetToken = asset->getValue();
-            auto image = resource::Image::create(assetToken);
+            auto image = resource::Image::create(asset);
             auto surface = image->getSurface();
             auto graphic = getDependence<system::IGraphic>();
             _pTexture = SDL_CreateTextureFromSurface(graphic->getRenderer(), surface);
@@ -58,12 +57,12 @@ namespace lux::element {
         }
 
     public:
-        DEFINE_TOKEN(lux::element::ImageElement);
-        ImageElement()
+        DEFINE_TOKEN(lux::element::Image);
+        Image()
             : _pTexture(nullptr), _dstRect({0, 0, 0, 0}), _nWidth(0), _nHeight(0),
             _uOpacity(255) {
         }
-        ~ImageElement() override {
+        ~Image() override {
             if (_pTexture) {
                 SDL_DestroyTexture(_pTexture);
             }

@@ -3,22 +3,22 @@
 #include "Element.hpp"
 #include "resource/Font.hpp"
 namespace lux::element {
-  class FontElement : public Element {
+  class Font : public Element {
   private:
     core::Pointer<resource::Font> _pFont;
   protected:
     void setProps(Props props) override {
       auto asset = props["asset"];
       auto size = props["size"];
-      if (size == nullptr || asset == nullptr) {
+      if (size.empty()|| asset.empty()) {
         throw RUNTIME_ERROR("Invalid property");
       }
-      _pFont = resource::Font::create(asset.cast<core::RefValue<std::string>>()->getValue().c_str(), size.cast<core::RefValue<int>>()->getValue());
+      _pFont = resource::Font::create(asset.c_str(), std::stoi(size));
       provide("$font", _pFont);
       Element::setProps(props);
     }
   public:
-    DEFINE_TOKEN(lux::element::FontElement);
+    DEFINE_TOKEN(lux::element::Font);
   };
 } // namespace lux::element
 

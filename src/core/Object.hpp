@@ -53,6 +53,9 @@ namespace lux::core {
           }
         }
       }
+      unsigned _getRef(){
+        return _pObject?_pObject->_nRef:0;
+      }
       Pointer(T* pObject = nullptr) : _pObject(pObject) { _addRef(); }
 
       Pointer(const Pointer<T>& another) : _pObject(another._pObject) {

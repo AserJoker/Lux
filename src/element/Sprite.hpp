@@ -1,15 +1,15 @@
 #ifndef _H_LUX_ELEMENT_SPRITE_ELEMENT_
 #define _H_LUX_ELEMENT_SPRITE_ELEMENT_
-#include "ImageElement.hpp"
+#include "Image.hpp"
 namespace lux::element {
-  class SpriteElement : public ImageElement {
+  class Sprite : public Image {
   protected:
     SDL_Rect _srcRect;
     SDL_Point _ptCenter;
     double _lfAngle;
     SDL_RendererFlip _rendererFlip;
     void setProps(Props props) override {
-      ImageElement::setProps(props);
+      Image::setProps(props);
       _srcRect = {0,0,_nWidth,_nHeight};
       _ptCenter = {_nWidth / 2,_nHeight / 2};
     }
@@ -55,11 +55,11 @@ namespace lux::element {
         return;
       }
 
-      ImageElement::setStateValue(name, value);
+      Image::setStateValue(name, value);
     }
   public:
-    DEFINE_TOKEN(lux::element::SpriteElement);
-    SpriteElement() {
+    DEFINE_TOKEN(lux::element::Sprite);
+    Sprite() {
       _srcRect = {0,0,0,0};
       _ptCenter = {0,0};
       _lfAngle = 0;
