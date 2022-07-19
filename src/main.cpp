@@ -15,6 +15,7 @@
 #include "system/Graphic.hpp"
 #include "system/Native.hpp"
 #include "system/Resource.hpp"
+#include "system/Script.hpp"
 
 #include "resource/Buffer.hpp"
 #include "resource/Font.hpp"
@@ -44,6 +45,7 @@ int main(int argc, char* argv[]) {
   PROVIDE(system::Graphic);
   PROVIDE(system::Resource);
   PROVIDE(system::Document);
+  PROVIDE(system::Script);
 
   core::Container::provide<resource::Buffer>(resource::Buffer::TOKEN,
     core::Container::PROTOTYPE);
@@ -70,6 +72,7 @@ int main(int argc, char* argv[]) {
     INJECT(system::INative);
     INJECT(system::IGraphic);
     INJECT(system::IResource);
+    INJECT(system::IScript);
     INJECT(system::IDocument);
     auto app = INJECT(system::Application);
     app->run();
