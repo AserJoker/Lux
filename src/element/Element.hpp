@@ -10,7 +10,6 @@ namespace lux::element {
 typedef std::map<std::string, std::string> Props;
 class Element : public core::Object {
 private:
-  // static std::map<std::string, core::Pointer<Element>> _indexed;
   core::Pointer<Element> _pNext;
   core::Pointer<Element> _pChildren;
   Element *_pParent;
