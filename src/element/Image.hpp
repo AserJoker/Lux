@@ -8,7 +8,7 @@
 namespace lux::element {
     class Image : public Element, public core::Dependence<system::IGraphic> {
     protected:
-        SDL_Texture* _pTexture;
+        core::Pointer<resource::Image> _pImage;
         SDL_Rect _dstRect;
         int _nWidth;
         int _nHeight;
@@ -19,14 +19,11 @@ namespace lux::element {
                 throw RUNTIME_ERROR("prop 'asset' must be string");
             }
             auto image = resource::Image::create(asset);
-            auto surface = image->getSurface();
-            auto graphic = getDependence<system::IGraphic>();
-            _pTexture = SDL_CreateTextureFromSurface(graphic->getRenderer(), surface);
-            if (!_pTexture) {
-                throw SDL_ERROR;
-            }
-            _nWidth = surface->w;
-            _nHeight = surface->h;
+            int w,h;
+            image->getSize(&w,&h);
+            _pImage = image;
+            _nWidth = w;
+            _nHeight = h;
             _dstRect = {0, 0, _nWidth, _nHeight};
             Element::setProps(props);
         }
@@ -59,18 +56,15 @@ namespace lux::element {
     public:
         DEFINE_TOKEN(lux::element::Image);
         Image()
-            : _pTexture(nullptr), _dstRect({0, 0, 0, 0}), _nWidth(0), _nHeight(0),
+            : _pImage(nullptr), _dstRect({0, 0, 0, 0}), _nWidth(0), _nHeight(0),
             _uOpacity(255) {
         }
         ~Image() override {
-            if (_pTexture) {
-                SDL_DestroyTexture(_pTexture);
-            }
         }
         void onUpdate() override {
             auto graphic = getDependence<system::IGraphic>();
-            if (_pTexture) {
-                if (SDL_RenderCopy(graphic->getRenderer(), _pTexture, nullptr,
+            if (_pImage->getTexture()!=nullptr) {
+                if (SDL_RenderCopy(graphic->getRenderer(), _pImage->getTexture(), nullptr,
                     &_dstRect) != 0) {
                     throw SDL_ERROR;
                 }

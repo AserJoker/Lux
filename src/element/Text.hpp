@@ -28,15 +28,14 @@ namespace lux::element {
         throw RUNTIME_ERROR("Could not get font");
       }
       auto img = font->createImage(_text.c_str(), _color);
-      auto sur = img->getSurface();
-      auto graphic = INJECT(system::IGraphic);
-      _pTexture = SDL_CreateTextureFromSurface(graphic->getRenderer(), sur);
-      SDL_SetTextureBlendMode(_pTexture,SDL_BLENDMODE_BLEND);
-      _nWidth = sur->w;
-      _nHeight = sur->h;
+      int w,h;
+      img->getSize(&w,&h);
+      _nWidth = w;
+      _nHeight = h;
       _srcRect = {0,0,_nWidth,_nHeight};
       _dstRect = {0,0,_nWidth,_nHeight};
       _ptCenter = {_nWidth / 2,_nHeight / 2};
+      _pImage = img;
     }
   };
 } // namespace lux::element

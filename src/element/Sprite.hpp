@@ -67,8 +67,8 @@ namespace lux::element {
     }
     void onUpdate() override {
       auto graphic = getDependence<system::IGraphic>();
-      if (_pTexture) {
-        if (SDL_RenderCopyEx(graphic->getRenderer(), _pTexture, &_srcRect,
+      if (_pImage->getTexture()!=nullptr) {
+        if (SDL_RenderCopyEx(graphic->getRenderer(), _pImage->getTexture(), &_srcRect,
           &_dstRect, _lfAngle, &_ptCenter, _rendererFlip) != 0) {
           throw SDL_ERROR;
         }

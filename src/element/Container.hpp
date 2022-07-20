@@ -21,20 +21,21 @@ namespace lux::element {
       _ptCenter = {_nWidth / 2,_nHeight / 2};
       _lfAngle = 0;
       auto graphic = INJECT(system::IGraphic);
-      _pTexture = SDL_CreateTexture(graphic->getRenderer(), SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_TARGET, _nWidth, _nHeight);
-      if (!_pTexture) {
+      SDL_Texture *pTexture = SDL_CreateTexture(graphic->getRenderer(), SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_TARGET, _nWidth, _nHeight);
+      if (!pTexture) {
         throw SDL_ERROR;
       }
-      if (SDL_SetTextureBlendMode(_pTexture, SDL_BLENDMODE_BLEND) != 0) {
+      if (SDL_SetTextureBlendMode(pTexture, SDL_BLENDMODE_BLEND) != 0) {
         throw SDL_ERROR;
       }
+      _pImage = resource::Image::create(pTexture,_nWidth,_nHeight);
       Element::setProps(props);
     }
   public:
     DEFINE_TOKEN(lux::element::Container);
     void onUpdate() override {
       auto graphic = INJECT(system::IGraphic);
-      SDL_SetRenderTarget(graphic->getRenderer(), _pTexture);
+      SDL_SetRenderTarget(graphic->getRenderer(), _pImage->getTexture());
       Element::onUpdate();
       SDL_SetRenderTarget(graphic->getRenderer(), nullptr);
       Sprite::onUpdate();
