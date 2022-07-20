@@ -26,9 +26,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2_ttf)
 find_package(cJSON CONFIG REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE cjson)
 
-find_package(tinyxml2 CONFIG REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE tinyxml2::tinyxml2)
-
 find_package(Lua REQUIRED)
 target_include_directories(${PROJECT_NAME} PRIVATE ${LUA_INCLUDE_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${LUA_LIBRARIES})
