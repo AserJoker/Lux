@@ -5,14 +5,10 @@
     "texture": {
         "demo": "texture/demo.png",
         "tile":{
-            "grass":"texture/tile/grass.png"
+            "grass-ground":"texture/tile/grass-ground.png"
         }
     },
     "font": {
         "demo": "font/LXGWWenKai-Regular.ttf"
-    },
-    "tile":{
-        "grass":"tile/grass.json"
-    },
-    "document":"document/index.xml"
+    }
 }

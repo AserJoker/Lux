@@ -3,3 +3,9 @@ Debug
 node_modules
 package-lock.json
 script/engine
+cmake-build-debug-visual-studio
+*.dll
+*.exe
+*.ilk
+*.pdb
+.idea

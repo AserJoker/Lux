@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.2)
 project(Lux)
 
 set(CMAKE_CXX_STANDARD 20)
-include_directories(.)
+include_directories(./src/)
 
 add_executable(${PROJECT_NAME} src/main.cpp)
 set(RUNTIME_OUTPUT_DIRECTORY .)
