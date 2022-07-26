@@ -10,8 +10,8 @@ namespace lux::graphic{
 class Container:public Sprite{
 public:
     DEFINE_TOKEN(lux::graphic::Container);
-    static core::Pointer<Container> create(int width,int height){
-        auto container = INJECT(Container);
+    static core::Pointer<Container> create(int width,int height,core::Pointer<Container> raw = nullptr){
+        auto container =raw!=nullptr?raw:INJECT(Container);
         auto graphic = INJECT(system::IGraphic);
         SDL_Texture *texture = SDL_CreateTexture(graphic->getRenderer(),SDL_PIXELFORMAT_ARGB32,SDL_TEXTUREACCESS_TARGET,width,height);
         if(!texture){

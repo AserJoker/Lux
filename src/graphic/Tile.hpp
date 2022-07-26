@@ -32,9 +32,9 @@ namespace lux::graphic {
         int& getTileHeight(){
             return _nTileHeight;
         }
-        static core::Pointer<Tile> create(const std::string& token,int nTileWidth,int nTileHeight){
+        static core::Pointer<Tile> create(const std::string& token,int nTileWidth,int nTileHeight,core::Pointer<Tile> raw=nullptr){
             auto img = Sprite::create(token);
-            auto tile = INJECT(Tile);
+            auto tile =raw!=nullptr?raw: INJECT(Tile);
             tile->_pImage = img;
             tile->_nTileWidth = nTileWidth;
             tile->_nTileHeight = nTileHeight;

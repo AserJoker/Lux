@@ -1,6 +1,8 @@
 #ifndef _H_LUX_GRAPHIC_SPRITE_
 #define _H_LUX_GRAPHIC_SPRITE_
 
+#include<any>
+
 #include "core/Object.hpp"
 #include "core/Dependence.hpp"
 #include "resource/Image.hpp"
@@ -20,8 +22,63 @@ namespace lux::graphic {
                 throw SDL_ERROR;
             }
         }
-        static core::Pointer<Sprite> create(const std::string& token){
-            auto sprite = INJECT(Sprite);
+        virtual bool setField(const std::string& name,std::any value){
+            if(name=="x"){
+                getDstRect().x = std::any_cast<int>(value);
+                return true;
+            }
+            if(name=="y"){
+                getDstRect().y = std::any_cast<int>(value);
+                return true;
+            }
+            if(name=="width"){
+                getDstRect().w = std::any_cast<int>(value);
+                return true;
+            }
+            if(name=="height"){
+                getDstRect().h = std::any_cast<int>(value);
+                return true;
+            }
+            if(name=="sourceX"){
+                getSrcRect().x = std::any_cast<int>(value);
+                return true;
+            }
+            if(name=="sourceY"){
+                getSrcRect().y = std::any_cast<int>(value);
+                return true;
+            }
+            if(name=="sourceWidth"){
+                getSrcRect().w = std::any_cast<int>(value);
+                return true;
+            }
+            if(name=="sourceHeight"){
+                getSrcRect().h = std::any_cast<int>(value);
+                return true;
+            }
+            if(name=="centerX"){
+                getCenter().x = std::any_cast<int>(value);
+                return true;
+            }
+            if(name=="centerY"){
+                getCenter().y = std::any_cast<int>(value);
+                return true;
+            }
+            if(name=="angle"){
+                setAngle(std::any_cast<double>(value));
+                return true;
+            }
+            if(name=="flip"){
+                setFlip(std::any_cast<SDL_RendererFlip>(value));
+                return true;
+            }
+            if(name=="image"){
+                setImage(resource::Image::create(std::any_cast<std::string>(value)));
+                return true;
+            }
+            return false;
+        }
+        static core::Pointer<Sprite> create(const std::string& token,core::Pointer<Sprite> raw = nullptr){
+            auto sprite =raw!=nullptr?raw:INJECT(Sprite);
             sprite->setImage( resource::Image::create(token));
             int w, h;
             sprite->getImage()->getSize(&w, &h);
