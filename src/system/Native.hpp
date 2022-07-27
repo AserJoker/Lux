@@ -6,10 +6,11 @@
 #include "Application.hpp"
 #include "interface/INative.hpp"
 #include "event/MainloopEvent.hpp"
+#include "event/KeyEvent.hpp"
 
 namespace lux::system {
     class Native : public INative,
-                   public core::Dependence<Application>,
+                   public core::Dependence<Application,core::EventBus>,
                    public core::EventBus::EventListener<event::MainloopEvent> {
     private:
         SDL_Window *_pWindow;
@@ -36,6 +37,10 @@ namespace lux::system {
                 if (event.type == SDL_QUIT) {
                     auto app = getDependence<Application>();
                     app->exit();
+                }
+                if(event.type == SDL_KEYDOWN){
+                    auto bus = getDependence<core::EventBus>();
+                    bus->emit(event::KeyEvent(event::KeyEvent::KEYDOWN,event.key.keysym.sym));
                 }
             }
         }

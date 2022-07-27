@@ -9,10 +9,11 @@
 #include "core/Dependence.hpp"
 #include "core/EventBus.hpp"
 #include "event/RenderEvent.hpp"
+#include "event/KeyEvent.hpp"
 #include "graphic/TileGroup.hpp"
 
 namespace lux::game {
-class Main : public core::Object,public core::EventBus::EventListener<event::RenderEvent>{
+class Main : public core::Object,public core::EventBus::EventListener<event::RenderEvent>,public core::EventBus::EventListener<event::KeyEvent>{
 private:
     core::Pointer<graphic::TileGroup> _pGroup;
     int count;
@@ -29,6 +30,26 @@ private:
                 _pGroup->setCell(x,y,1);
             }
             _pGroup->render();
+        }
+        void on(event::KeyEvent *event) override{
+            if(event->getAction()==event::KeyEvent::KEYDOWN){
+                if(event->getKey()==SDLK_a){
+                    auto camera = INJECT(system::ICamera);
+                    camera->move(-1,0);
+                }
+                if(event->getKey()==SDLK_d){
+                    auto camera = INJECT(system::ICamera);
+                    camera->move(1,0);
+                }
+                if(event->getKey()==SDLK_w){
+                    auto camera = INJECT(system::ICamera);
+                    camera->move(0,-1);
+                }
+                if(event->getKey()==SDLK_s){
+                    auto camera = INJECT(system::ICamera);
+                    camera->move(0,1);
+                }
+            }
         }
     };
 }
