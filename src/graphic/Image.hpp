@@ -17,9 +17,10 @@ namespace lux::graphic {
         SDL_Point _ptCenter;
         double _lfAngle;
         SDL_RendererFlip _flip;
+        bool _blAbsolute;
     protected:
         Image() : _pImage(nullptr), _srcRect({0, 0, 0, 0}), _dstRect({0, 0, 0, 0}), _ptCenter({0, 0}), _lfAngle(0),
-                  _flip(SDL_FLIP_NONE) {}
+                  _flip(SDL_FLIP_NONE),_blAbsolute(true) {}
     public:
         core::Pointer<resource::Image> getImage(){
             return _pImage;
@@ -36,17 +37,14 @@ namespace lux::graphic {
         SDL_Point& getCenter(){
             return _ptCenter;
         }
-        [[nodiscard]] double getAngle() const{
+        double& getAngle(){
             return _lfAngle;
         }
-        void setAngle(double angle){
-            _lfAngle = angle;
+        bool& IsAbsolute(){
+            return _blAbsolute;
         }
-        [[nodiscard]] SDL_RendererFlip  getFlip() const{
+        SDL_RendererFlip&  getFlip(){
             return _flip;
-        }
-        void setFlip(SDL_RendererFlip flip){
-            _flip = flip;
         }
         virtual void render() = 0;
     };

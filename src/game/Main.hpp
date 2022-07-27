@@ -21,16 +21,12 @@ private:
         DEFINE_TOKEN(lux::game::Main);
         Main(): _pGroup(nullptr),count(0),x(0),y(0){
             _pGroup = graphic::TileGroup::create(graphic::Tile::create("texture::tile::grass-ground",32,32),16,16);
+            _pGroup->IsAbsolute() = false;
         }
         void on(event::RenderEvent*) override{
             count++;
             if(count%1000==0&&x<16&&y<16){
                 _pGroup->setCell(x,y,1);
-                x++;
-                if(x==16){
-                    x=0;
-                    y++;
-                }
             }
             _pGroup->render();
         }
