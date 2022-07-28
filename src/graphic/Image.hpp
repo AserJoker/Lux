@@ -20,7 +20,7 @@ namespace lux::graphic {
         bool _blAbsolute;
     protected:
         Image() : _pImage(nullptr), _srcRect({0, 0, 0, 0}), _dstRect({0, 0, 0, 0}), _ptCenter({0, 0}), _lfAngle(0),
-                  _flip(SDL_FLIP_NONE),_blAbsolute(true) {}
+                  _flip(SDL_FLIP_NONE),_blAbsolute(false) {}
     public:
         core::Pointer<resource::Image> getImage(){
             return _pImage;

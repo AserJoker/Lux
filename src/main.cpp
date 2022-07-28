@@ -29,6 +29,10 @@
 #include "graphic/TileGroup.hpp"
 
 #include "game/Main.hpp"
+#include "game/Map.hpp"
+#include "game/Block.hpp"
+#include "game/Item.hpp"
+#include "game/Entity.hpp"
 
 using namespace lux;
 
@@ -49,6 +53,7 @@ int main(int argc, char *argv[]) {
     PROVIDE(system::Input);
 
     PROVIDE(game::Main);
+    PROVIDE(game::Map);
 
     PROVIDE_PROTOTYPE(resource::Buffer);
     PROVIDE_PROTOTYPE(resource::Image);
@@ -58,6 +63,10 @@ int main(int argc, char *argv[]) {
     PROVIDE_PROTOTYPE(graphic::Container);
     PROVIDE_PROTOTYPE(graphic::Tile);
     PROVIDE_PROTOTYPE(graphic::TileGroup);
+
+    PROVIDE_PROTOTYPE(game::Block);
+    PROVIDE_PROTOTYPE(game::Item);
+    PROVIDE_PROTOTYPE(game::Entity);
 
     try {
         INJECT(system::INative);

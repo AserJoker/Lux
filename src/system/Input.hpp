@@ -11,6 +11,8 @@
 #include "event/SDLEvent.hpp"
 #include "event/MainloopEvent.hpp"
 #include "event/KeyEvent.hpp"
+#include "event/MouseButtonEvent.hpp"
+#include "event/MouseMoveEvent.hpp"
 
 namespace lux::system {
     class Input
@@ -22,7 +24,10 @@ namespace lux::system {
         std::map<int,uint32_t> _keyboard;
     public:
         void on(event::SDLEvent *event) override {
+            auto bus = getDependence<core::EventBus>();
+            auto e = event->getSDLEvent();
             auto key = event->getSDLEvent().key.keysym.sym;
+            auto button = event->getSDLEvent().button.button;
             if(event->getSDLEvent().type==SDL_KEYDOWN){
                 if(!_keyboard.contains(key)) {
                     _keyboard.insert({key, SDL_GetTicks()});
@@ -31,8 +36,16 @@ namespace lux::system {
             if(event->getSDLEvent().type==SDL_KEYUP){
                 auto delay = SDL_GetTicks() - _keyboard[key];
                 _keyboard.erase(key);
-                auto bus = getDependence<core::EventBus>();
                 bus->emit(event::KeyEvent(event::KeyEvent::KEYUP,key,delay));
+            }
+            if(event->getSDLEvent().type==SDL_MOUSEBUTTONDOWN){
+                bus->emit(event::MouseButtonEvent(button,event::MouseButtonEvent::DOWN,{e.button.x,e.button.y}));
+            }
+            if(event->getSDLEvent().type==SDL_MOUSEBUTTONUP){
+                bus->emit(event::MouseButtonEvent(button,event::MouseButtonEvent::UP,{e.button.x,e.button.y}));
+            }
+            if(event->getSDLEvent().type==SDL_MOUSEMOTION){
+                bus->emit(event::MouseMoveEvent({e.motion.x,e.motion.y}));
             }
         }
 

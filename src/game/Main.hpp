@@ -11,52 +11,35 @@
 #include "event/RenderEvent.hpp"
 #include "event/SDLEvent.hpp"
 #include "event/KeyEvent.hpp"
+#include "event/MouseButtonEvent.hpp"
 #include "graphic/TileGroup.hpp"
+#include "Map.hpp"
 
 namespace lux::game {
     class Main
             : public core::Object,
-              public core::Dependence<system::Application>,
+              public core::Dependence<system::Application,Map>,
               public core::EventBus::EventListener<event::RenderEvent>,
               public core::EventBus::EventListener<event::KeyEvent>,
-              public core::EventBus::EventListener<event::SDLEvent> {
-    private:
-        core::Pointer <graphic::TileGroup> _pGroup;
-        int count;
-        int x, y;
+              public core::EventBus::EventListener<event::SDLEvent>,
+              public core::EventBus::EventListener<event::MouseButtonEvent> {
     public:
         DEFINE_TOKEN(lux::game::Main);
 
-        Main() : _pGroup(nullptr), count(0), x(0), y(0) {
-            _pGroup = graphic::TileGroup::create(graphic::Tile::create("texture::tile::grass-ground", 32, 32), 16, 16);
-            _pGroup->IsAbsolute() = false;
-        }
-
         void on(event::RenderEvent *) override {
-            count++;
-            if (count % 1000 == 0 && x < 16 && y < 16) {
-                _pGroup->setCell(x, y, 1);
-            }
-            _pGroup->render();
+            auto map = getDependence<Map>();
+            map->render();
         }
 
         void on(event::KeyEvent *event) override {
             if (event->getAction() == event::KeyEvent::KEYDOWN) {
                 if (event->getKey() == SDLK_a) {
                     auto camera = INJECT(system::ICamera);
-                    camera->move(-1, 0);
+                    camera->getPosition().x++;
                 }
                 if (event->getKey() == SDLK_d) {
                     auto camera = INJECT(system::ICamera);
-                    camera->move(1, 0);
-                }
-                if (event->getKey() == SDLK_w) {
-                    auto camera = INJECT(system::ICamera);
-                    camera->move(0, -1);
-                }
-                if (event->getKey() == SDLK_s) {
-                    auto camera = INJECT(system::ICamera);
-                    camera->move(0, 1);
+                    camera->getPosition().x--;
                 }
             }
         }
@@ -66,6 +49,8 @@ namespace lux::game {
                 auto app = getDependence<system::Application>();
                 app->exit();
             }
+        }
+        void on(event::MouseButtonEvent *event) override{
         }
     };
 }

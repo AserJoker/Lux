@@ -57,11 +57,34 @@ namespace lux::graphic{
             tileWidth = _pTile->getTileWidth();
             tileHeight = _pTile->getTileHeight();
             int widthCount = width/tileWidth;
+            int heightCount = height/tileHeight;
+            if(x<0&&x>=widthCount){
+                return;
+            }
+            if(y<0&&y>=heightCount){
+                return;
+            }
             _pData[y*widthCount+x] = value;
             begin();
             SDL_Rect rc = {x*tileWidth,y*tileHeight,tileWidth,tileHeight};
             _pTile->render(value,rc);
             end();
+        }
+        unsigned getCell(int x,int y){
+            int width,height;
+            int tileWidth,tileHeight;
+            getImage()->getSize(&width,&height);
+            tileWidth = _pTile->getTileWidth();
+            tileHeight = _pTile->getTileHeight();
+            int widthCount = width/tileWidth;
+            int heightCount = height/tileHeight;
+            if(x<0&&x>=widthCount){
+                return -1;
+            }
+            if(y<0&&y>=heightCount){
+                return -1;
+            }
+            return _pData[y*widthCount+x];
         }
         void render() override{
             if(_isLock){
