@@ -17,6 +17,7 @@
 #include "system/Resource.hpp"
 #include "system/Script.hpp"
 #include "system/Camera.hpp"
+#include "system/Input.hpp"
 
 #include "resource/Buffer.hpp"
 #include "resource/Font.hpp"
@@ -45,6 +46,7 @@ int main(int argc, char *argv[]) {
     PROVIDE(system::Resource);
     PROVIDE(system::Script);
     PROVIDE(system::Camera);
+    PROVIDE(system::Input);
 
     PROVIDE(game::Main);
 
@@ -63,6 +65,7 @@ int main(int argc, char *argv[]) {
         INJECT(system::IResource);
         INJECT(system::IScript);
         INJECT(system::ICamera);
+        INJECT(system::IInput);
         INJECT(game::Main);
 
         auto app = INJECT(system::Application);

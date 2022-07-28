@@ -16,8 +16,9 @@ namespace lux::event {
     private:
         ACTION _action;
         int _nKey;
+        Uint32 _uDelay;
     public:
-        KeyEvent(ACTION action, int key) : _action(action), _nKey(key) {
+        KeyEvent(ACTION action, int key,Uint32 delay) : _action(action), _nKey(key),_uDelay(delay) {
 
         }
 
@@ -27,6 +28,9 @@ namespace lux::event {
 
         [[nodiscard]] ACTION getAction() const {
             return _action;
+        }
+        [[nodiscard]] Uint32 getDelay() const{
+            return _uDelay;
         }
     };
 }

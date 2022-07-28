@@ -6,6 +6,7 @@
 #include "Application.hpp"
 #include "interface/INative.hpp"
 #include "event/MainloopEvent.hpp"
+#include "event/SDLEvent.hpp"
 #include "event/KeyEvent.hpp"
 
 namespace lux::system {
@@ -34,14 +35,8 @@ namespace lux::system {
         void on(event::MainloopEvent *) override {
             SDL_Event event;
             if (SDL_PollEvent(&event)) {
-                if (event.type == SDL_QUIT) {
-                    auto app = getDependence<Application>();
-                    app->exit();
-                }
-                if(event.type == SDL_KEYDOWN){
-                    auto bus = getDependence<core::EventBus>();
-                    bus->emit(event::KeyEvent(event::KeyEvent::KEYDOWN,event.key.keysym.sym));
-                }
+                auto bus = getDependence<core::EventBus>();
+                bus->emit(event::SDLEvent(event));
             }
         }
 
