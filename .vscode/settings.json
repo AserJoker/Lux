@@ -1,4 +1,10 @@
 {
+    "editor.fontLigatures": true,
+    "editor.cursorBlinking": "smooth",
+    "editor.smoothScrolling": true,
+    "editor.cursorSmoothCaretAnimation": true,
+    "editor.renderWhitespace": "boundary",
+    "editor.fontFamily": "JetBrains Mono",
     "cmake.configureSettings": {
         "CMAKE_TOOLCHAIN_FILE": "D:/vcpkg/scripts/buildsystems/vcpkg.cmake",
         "CMAKE_EXPORT_COMPILE_COMMANDS":"on"
