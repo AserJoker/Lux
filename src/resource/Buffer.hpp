@@ -2,6 +2,7 @@
 #define _H_LUX_RESOURCE_BUFFER_
 
 #include "core/Object.hpp"
+#include "core/Container.hpp"
 
 namespace lux::resource {
     class Buffer : public core::Object {
@@ -27,7 +28,7 @@ namespace lux::resource {
             return (T *) _pBuffer;
         }
 
-        std::string toString() {
+        std::string toString() override {
             std::string result(this->getBuffer<char>(), _nSize);
             return result;
         }

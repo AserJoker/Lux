@@ -2,6 +2,7 @@
 #define _H_LUX_SYSTEM_APPLICATION_
 
 #include "core/Object.hpp"
+#include "core/Container.hpp"
 #include "event/MainloopEvent.hpp"
 #include "core/EventBus.hpp"
 #include <SDL.h>

@@ -6,6 +6,7 @@
 #define _H_LUX_EVENT_KEY_EVENT_
 
 #include "core/EventBus.hpp"
+#include <SDL.h>
 
 namespace lux::event {
     class KeyEvent : public core::EventBus::BaseEvent<"key"> {

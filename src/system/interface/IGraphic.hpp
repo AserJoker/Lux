@@ -2,7 +2,7 @@
 #define _H_LUX_SYSTEM_IGRAPHIC_
 
 #include"IComponent.hpp"
-
+#include <SDL.h>
 namespace lux::system {
     class IGraphic : public IComponent {
     public:

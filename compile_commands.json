@@ -1,0 +1,7 @@
+[
+{
+  "directory": "D:/project/Lux/cmake-build-debug-visual-studio",
+  "command": "C:\\PROGRA~1\\MICROS~3\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1432~1.313\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DFMT_LOCALE -DFMT_SHARED -DLUA_BUILD_AS_DLL -ID:\\project\\Lux\\.\\src -ID:\\project\\Lux -ID:\\vcpkg\\installed\\x64-windows\\include -ID:\\vcpkg\\installed\\x64-windows\\include\\SDL2 /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1 -std:c++20 /FoCMakeFiles\\Lux.dir\\src\\main.cpp.obj /FdTARGET_COMPILE_PDB /FS -c D:\\project\\Lux\\src\\main.cpp",
+  "file": "D:\\project\\Lux\\src\\main.cpp"
+}
+]

@@ -2,6 +2,7 @@
 #define _H_LUX_CORE_EVENTBUS_
 
 #include "Object.hpp"
+#include "Container.hpp"
 #include <map>
 #include <string>
 #include <vector>

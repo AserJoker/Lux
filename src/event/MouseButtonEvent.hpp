@@ -5,6 +5,7 @@
 #ifndef _H_LUX_MOUSE_BUTTON_EVENT_
 #define _H_LUX_MOUSE_BUTTON_EVENT_
 #include "core/EventBus.hpp"
+#include <SDL.h>
 namespace lux::event{
 class MouseButtonEvent:public core::EventBus::BaseEvent<"mouse button">{
 public:

@@ -3,6 +3,7 @@
 
 #include "Object.hpp"
 #include "util.hpp"
+#include "Container.hpp"
 
 namespace lux::core {
     class Value : public Object {

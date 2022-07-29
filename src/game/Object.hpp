@@ -6,6 +6,7 @@
 #define _H_LUX_GAME_OBJECT_
 
 #include "core/Object.hpp"
+#include <any>
 
 namespace lux::game {
     class Object : public core::Object {

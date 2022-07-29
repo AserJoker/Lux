@@ -13,7 +13,6 @@
 namespace lux::game {
     class Map
             : public core::Object,
-              public core::EventBus::EventListener<event::MainloopEvent>,
               public core::Dependence<system::ICamera> {
     private:
         SDL_Rect _rc;
@@ -21,14 +20,15 @@ namespace lux::game {
     public:
         DEFINE_TOKEN(lux::game::Map);
 
-        Map() : _rc({-4 * 16, -4 * 16, 8 * 16, 8 * 16}), _chunks({}) {
+        Map() : _rc({-2*16, -2*16, 4* 16,  4*16}), _chunks({}) {
             std::vector<core::Pointer < graphic::TileGroup>> _newChunks;
             for (int y = 0; y < _rc.h; y += 16) {
                 for (int x = 0; x < _rc.w; x += 16) {
                     auto chunk = graphic::TileGroup::create(
                             graphic::Tile::create("texture::tile::grass-ground", 32, 32), 16, 16);
-                    chunk->getDstRect().x = x * 32 + _rc.x;
-                    chunk->getDstRect().y = y * 32 + _rc.y;
+                    chunk->IsAbsolute() = false;
+                    chunk->getDstRect().x = x * 32 + _rc.x*32;
+                    chunk->getDstRect().y = y * 32 + _rc.y*32;
                     _newChunks.push_back(chunk);
                 }
             }
@@ -39,14 +39,6 @@ namespace lux::game {
             for (auto &chunk: _chunks) {
                 chunk->render();
             }
-        }
-
-        void on(event::MainloopEvent *) override {
-            auto camera = getDependence<system::ICamera>();
-            auto cx = (camera->getPosition().x - camera->getPosition().x % (32 * 16))/32;
-            auto cy = (camera->getPosition().y - camera->getPosition().y % (32 * 16))/32;
-            _rc.x = cx - 4 * 16;
-            _rc.y = cy - 4 * 16;
         }
     };
 }
