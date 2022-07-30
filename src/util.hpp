@@ -5,14 +5,9 @@
 #define SDL_ERROR RUNTIME_ERROR(SDL_GetError())
 #define DEFINE_TOKEN(token) constexpr static const char *TOKEN = #token;
 #include <iostream>
-template<size_t N>
-struct c_string {
-  constexpr c_string(const char(&str)[N]) {
-    std::copy_n(str, N, value);
-  }
+template <size_t N> struct c_string {
+  constexpr c_string(const char (&str)[N]) { std::copy_n(str, N, value); }
   char value[N];
-  std::string toString() {
-    return std::string(value);
-  }
+  std::string toString() { return std::string(value); }
 };
 #endif
