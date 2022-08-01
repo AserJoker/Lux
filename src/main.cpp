@@ -11,7 +11,6 @@
 #include "core/Context.hpp"
 #include "core/EventBus.hpp"
 
-
 #include "system/Application.hpp"
 #include "system/Camera.hpp"
 #include "system/Graphic.hpp"
@@ -20,23 +19,15 @@
 #include "system/Resource.hpp"
 #include "system/Script.hpp"
 
-
 #include "resource/Buffer.hpp"
 #include "resource/Font.hpp"
 #include "resource/Image.hpp"
 
-#include "graphic/Container.hpp"
 #include "graphic/Sprite.hpp"
 #include "graphic/Tile.hpp"
 #include "graphic/TileGroup.hpp"
 
-
-#include "game/Block.hpp"
-#include "game/Entity.hpp"
-#include "game/Item.hpp"
 #include "game/Main.hpp"
-#include "game/Map.hpp"
-
 
 using namespace lux;
 
@@ -57,20 +48,14 @@ int main(int argc, char *argv[]) {
   PROVIDE(system::Input);
 
   PROVIDE(game::Main);
-  PROVIDE(game::Map);
 
   PROVIDE_PROTOTYPE(resource::Buffer);
   PROVIDE_PROTOTYPE(resource::Image);
   PROVIDE_PROTOTYPE(resource::Font);
 
   PROVIDE_PROTOTYPE(graphic::Sprite);
-  PROVIDE_PROTOTYPE(graphic::Container);
   PROVIDE_PROTOTYPE(graphic::Tile);
   PROVIDE_PROTOTYPE(graphic::TileGroup);
-
-  PROVIDE_PROTOTYPE(game::Block);
-  PROVIDE_PROTOTYPE(game::Item);
-  PROVIDE_PROTOTYPE(game::Entity);
 
   try {
     INJECT(system::INative);

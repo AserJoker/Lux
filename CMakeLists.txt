@@ -8,7 +8,7 @@ include_directories(./src/)
 set(CMAKE_EXPORT_COMPILE_COMMANDS on)
 
 add_executable(${PROJECT_NAME} src/main.cpp)
-set(RUNTIME_OUTPUT_DIRECTORY .)
+set(RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
@@ -31,9 +31,3 @@ target_link_libraries(${PROJECT_NAME} PRIVATE cjson)
 find_package(Lua REQUIRED)
 target_include_directories(${PROJECT_NAME} PRIVATE ${LUA_INCLUDE_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${LUA_LIBRARIES})
-
-find_package(Duktape CONFIG REQUIRED)
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${DUKTAPE_INCLUDE_DIRS})
-
-target_link_libraries(${PROJECT_NAME} PRIVATE ${DUKTAPE_LIBRARY})

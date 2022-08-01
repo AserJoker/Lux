@@ -7,7 +7,8 @@
     "editor.fontFamily": "JetBrains Mono",
     "cmake.configureSettings": {
         "CMAKE_TOOLCHAIN_FILE": "D:/vcpkg/scripts/buildsystems/vcpkg.cmake",
-        "CMAKE_EXPORT_COMPILE_COMMANDS":"on"
+        "CMAKE_EXPORT_COMPILE_COMMANDS":"on",
+        "VCPKG_DEFAULT_TRIPLET":"x64-windows"
     },
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
     "files.associations": {
@@ -80,5 +81,8 @@
         "stack": "cpp",
         "any": "cpp"
     },
-    "C_Cpp.clang_format_fallbackStyle": "LLVM"
+    "C_Cpp.clang_format_fallbackStyle": "LLVM",
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true
 }
