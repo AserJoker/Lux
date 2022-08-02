@@ -27,6 +27,8 @@
 #include "graphic/Tile.hpp"
 #include "graphic/TileGroup.hpp"
 
+#include "game/Background.hpp"
+#include "game/EntityPool.hpp"
 #include "game/Main.hpp"
 
 using namespace lux;
@@ -48,6 +50,8 @@ int main(int argc, char *argv[]) {
   PROVIDE(system::Input);
 
   PROVIDE(game::Main);
+  PROVIDE(game::Background);
+  PROVIDE(game::EntityPool);
 
   PROVIDE_PROTOTYPE(resource::Buffer);
   PROVIDE_PROTOTYPE(resource::Image);

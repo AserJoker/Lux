@@ -19,7 +19,7 @@ private:
 public:
   Native() : _pWindow(nullptr) {
     _pWindow = SDL_CreateWindow("Lux Demo", SDL_WINDOWPOS_CENTERED,
-                                SDL_WINDOWPOS_CENTERED, 800, 600, 0);
+                                SDL_WINDOWPOS_CENTERED, 1024, 768, 0);
     if (!_pWindow) {
       throw SDL_ERROR;
     }

@@ -1,16 +1,19 @@
 {
-    "i18n": {
-        "zh_CN": "i18n/zh_CN.json"
+  "i18n": {
+    "zh_CN": "i18n/zh_CN.json"
+  },
+  "texture": {
+    "tile": {
+      "grass-ground": "texture/tile/grass-ground.png"
     },
-    "texture": {
-        "demo": "texture/demo.png",
-        "tile":{
-            "grass-ground":"texture/tile/grass-ground.png"
-        }
-    },
-    "font": {
-        "demo": "font/LXGWWenKai-Regular.ttf"
-    },
-    "player":"Graphics//Characters//001-Fighter01.png",
-    "player2":"Graphics//Characters//002-Fighter02.png"
+    "background": {
+      "night": "texture/background/night.jpg",
+      "ocean": "texture/background/ocean.jpg"
+    }
+  },
+  "font": {
+    "demo": "font/LXGWWenKai-Regular.ttf"
+  },
+  "player": "Graphics//Characters//001-Fighter01.png",
+  "player2": "Graphics//Characters//002-Fighter02.png"
 }

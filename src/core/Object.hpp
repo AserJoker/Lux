@@ -35,6 +35,7 @@ public:
 
   protected:
     virtual T *get() { return (T *)this->_pObject; }
+    virtual T *get() const { return (T *)this->_pObject; }
 
     virtual void set(Object *obj) { this->_pObject = obj; }
 
@@ -100,6 +101,10 @@ public:
 
     bool operator==(T *pObject) { return get() == pObject; }
 
+    bool operator==(const Pointer<T> &another) const {
+      return get() == another._pObject;
+    }
+
     bool operator==(const Pointer<T> &another) {
       return get() == another._pObject;
     }
@@ -107,6 +112,10 @@ public:
     bool operator!=(T *pObject) { return get() != pObject; }
 
     bool operator!=(const Pointer<T> &another) {
+      return get() != another._pObject;
+    }
+
+    bool operator!=(const Pointer<T> &another) const {
       return get() != another._pObject;
     }
 

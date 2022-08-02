@@ -5,10 +5,17 @@
 #ifndef _H_LUX_GAME_MAIN_
 #define _H_LUX_GAME_MAIN_
 
+#include "Background.hpp"
+#include "Charactor.hpp"
+#include "Entity.hpp"
+#include "EntityPool.hpp"
+#include "Map.hpp"
+#include "core/Container.hpp"
 #include "core/Dependence.hpp"
 #include "core/EventBus.hpp"
 #include "core/Object.hpp"
 #include "event/KeyEvent.hpp"
+#include "event/MainloopEvent.hpp"
 #include "event/MouseButtonEvent.hpp"
 #include "event/RenderEvent.hpp"
 #include "event/SDLEvent.hpp"
@@ -18,38 +25,69 @@
 #include "system/interface/IGraphic.hpp"
 
 namespace lux::game {
-class Main : public core::Object,
-             public core::Dependence<system::Application, system::IGraphic>,
-             public core::EventBus::EventListener<event::RenderEvent>,
-             public core::EventBus::EventListener<event::KeyEvent>,
-             public core::EventBus::EventListener<event::SDLEvent>,
-             public core::EventBus::EventListener<event::MouseButtonEvent> {
+class Main
+    : public core::Object,
+      public core::Dependence<system::Application, Background, Map, EntityPool>,
+      public core::EventBus::EventListener<event::RenderEvent>,
+      public core::EventBus::EventListener<event::KeyEvent>,
+      public core::EventBus::EventListener<event::SDLEvent>,
+      public core::EventBus::EventListener<event::MouseButtonEvent>,
+      public core::EventBus::EventListener<event::MainloopEvent> {
 private:
-  core::Pointer<graphic::Sprite> _sp;
-  core::Pointer<graphic::Sprite> _sp2;
+  core::Pointer<Entity> _pEntity;
 
 public:
   DEFINE_TOKEN(lux::game::Main);
-  Main() : _sp(nullptr), _sp2(nullptr) {
-    _sp = graphic::Sprite::create("player");
-    _sp2 = graphic::Sprite::create("player2");
-    _sp->getSrcRect().w = 32;
-    _sp->getSrcRect().h = 48;
-    _sp->getDstRect().w = 32;
-    _sp->getDstRect().h = 48;
-    _sp2->getSrcRect().w = 32;
-    _sp2->getSrcRect().h = 48;
-    _sp2->getDstRect().w = 32;
-    _sp2->getDstRect().h = 48;
-    _sp2->getDstRect().x = 32;
+  Main() : _pEntity(nullptr) {
+    auto bg = getDependence<Background>();
+    PROVIDE_PROTOTYPE(Entity);
+    PROVIDE_PROTOTYPE(Charactor);
+    _pEntity = Charactor::create("player").cast<Entity>();
   }
 
   void on(event::RenderEvent *) override {
-    _sp->render();
-    _sp2->render();
+    getDependence<Background>()->render();
+    getDependence<EntityPool>()->render();
+  }
+  void on(event::MainloopEvent *) override {
+    static int count = 0;
+    if (count % 100 == 0) {
+      getDependence<Background>()->move(1, 0);
+    }
+    count++;
   }
 
-  void on(event::KeyEvent *event) override {}
+  void on(event::KeyEvent *event) override {
+    auto charactor = _pEntity.cast<Charactor>();
+    if (event->getKey() == SDLK_a) {
+      if (event->getAction() == event::KeyEvent::KEYDOWN) {
+        charactor->setStepX(-1);
+      } else {
+        charactor->setStepX(0);
+      }
+    }
+    if (event->getKey() == SDLK_d) {
+      if (event->getAction() == event::KeyEvent::KEYDOWN) {
+        charactor->setStepX(1);
+      } else {
+        charactor->setStepX(0);
+      }
+    }
+    if (event->getKey() == SDLK_w) {
+      if (event->getAction() == event::KeyEvent::KEYDOWN) {
+        charactor->setStepY(-1);
+      } else {
+        charactor->setStepY(0);
+      }
+    }
+    if (event->getKey() == SDLK_s) {
+      if (event->getAction() == event::KeyEvent::KEYDOWN) {
+        charactor->setStepY(1);
+      } else {
+        charactor->setStepY(0);
+      }
+    }
+  }
   void on(event::MouseButtonEvent *event) override {}
   void on(event::SDLEvent *event) override {
     if (event->getSDLEvent().type == SDL_QUIT) {
