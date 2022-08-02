@@ -10,3 +10,4 @@ cmake-build-debug-visual-studio
 *.pdb
 .idea
 .cache
+dist

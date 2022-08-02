@@ -8,152 +8,160 @@
 #include <string>
 
 namespace lux::core {
-    class Object {
-    private:
-        unsigned _nRef;
-        unsigned _nId;
-        std::string _szType;
+class Object {
+private:
+  unsigned _nRef;
+  unsigned _nId;
+  std::string _szType;
 
-        static std::map<unsigned, Object *> _runtime;
+  static std::map<unsigned, Object *> _runtime;
 
-        static unsigned createId() {
-            static unsigned nCounter = 0;
-            return ++nCounter;
+  static unsigned createId() {
+    static unsigned nCounter = 0;
+    return ++nCounter;
+  }
+
+  friend class Container;
+
+protected:
+  Object() : _nRef(0), _nId(Object::createId()) {
+    Object::_runtime[_nId] = this;
+  }
+
+public:
+  template <class T> class Pointer {
+  private:
+    Object *_pObject;
+
+  protected:
+    virtual T *get() { return (T *)this->_pObject; }
+
+    virtual void set(Object *obj) { this->_pObject = obj; }
+
+  public:
+    void _addRef() {
+      auto pObject = get();
+      if (pObject) {
+        pObject->_nRef++;
+      }
+    }
+
+    void _release() {
+      if (_pObject) {
+        if (!--_pObject->_nRef) {
+
+          delete _pObject;
+          _pObject = nullptr;
         }
+      }
+    }
 
-        friend class Container;
+    Pointer(T *pObject = nullptr) : _pObject(pObject) { _addRef(); }
 
-    protected:
-        Object() : _nRef(0), _nId(Object::createId()) {
-            Object::_runtime[_nId] = this;
-        }
+    Pointer(const Pointer<T> &another) : _pObject(another._pObject) {
+      _addRef();
+    }
 
-    public:
-        template<class T>
-        class Pointer {
-        private:
-            Object *_pObject;
+    virtual ~Pointer() { _release(); }
 
-        protected:
-            virtual T *get() { return (T *) this->_pObject; }
+    T *operator->() {
+      auto obj = get();
+      if (!obj) {
+        throw RUNTIME_ERROR("NullPointer");
+      }
+      return obj;
+    }
 
-            virtual void set(Object *obj) { this->_pObject = obj; }
+    T &operator*() {
+      auto obj = get();
+      if (!obj) {
+        throw RUNTIME_ERROR("NullPointer");
+      }
+      return *obj;
+    }
 
-        public:
-            void _addRef() {
-                auto pObject = get();
-                if (pObject) {
-                    pObject->_nRef++;
-                }
-            }
+    T *week() { return (T *)get(); }
 
-            void _release() {
-                if (_pObject) {
-                    if (!--_pObject->_nRef) {
+    Pointer<T> &operator=(T *pObject) {
+      _release();
+      set(pObject);
+      _addRef();
+      return *this;
+    }
 
-                        delete _pObject;
-                        _pObject = nullptr;
-                    }
-                }
-            }
+    Pointer<T> &operator=(const Pointer<T> &another) {
+      if (this != &another) {
+        _release();
+        set(another._pObject);
+        _addRef();
+      }
+      return *this;
+    }
 
-            Pointer(T *pObject = nullptr) : _pObject(pObject) { _addRef(); }
+    bool operator==(T *pObject) { return get() == pObject; }
 
-            Pointer(const Pointer<T> &another) : _pObject(another._pObject) {
-                _addRef();
-            }
+    bool operator==(const Pointer<T> &another) {
+      return get() == another._pObject;
+    }
 
-            virtual ~Pointer() { _release(); }
+    bool operator!=(T *pObject) { return get() != pObject; }
 
-            T *operator->() { return get(); }
+    bool operator!=(const Pointer<T> &another) {
+      return get() != another._pObject;
+    }
 
-            T &operator*() { return *get(); }
+    template <class K> Pointer<K> cast() {
+      Pointer<K> result((K *)_pObject);
+      return result;
+    }
+  };
 
-            T *week() { return (T *) get(); }
+  std::string &getClassName() { return _szType; }
 
-            Pointer<T> &operator=(T *pObject) {
-                _release();
-                set(pObject);
-                _addRef();
-                return *this;
-            }
+  virtual std::string toString() {
+    return fmt::format("[object {}]", getClassName());
+  }
 
-            Pointer<T> &operator=(const Pointer<T> &another) {
-                if (this != &another) {
-                    _release();
-                    set(another._pObject);
-                    _addRef();
-                }
-                return *this;
-            }
+  unsigned getId() { return _nId; }
 
-            bool operator==(T *pObject) { return get() == pObject; }
+  virtual ~Object() { Object::_runtime.erase(_nId); };
 
-            bool operator==(const Pointer<T> &another) {
-                return get() == another._pObject;
-            }
+  template <class T> static Object::Pointer<T> select(unsigned id) {
+    auto pair = Object::_runtime.find(id);
+    if (pair != Object::_runtime.end()) {
+      return core::Object::Pointer<T>((T *)pair->second);
+    }
+    return core::Object::Pointer<T>(nullptr);
+  }
+};
 
-            bool operator!=(T *pObject) { return get() != pObject; }
+template <class T> using RELEASE = void (*)(T *obj);
 
-            bool operator!=(const Pointer<T> &another) {
-                return get() != another._pObject;
-            }
+template <class T, RELEASE<T> release = nullptr> class Ref : public Object {
+private:
+  T *_value;
 
-            template<class K>
-            Pointer<K> cast() {
-                Pointer<K> result((K *) _pObject);
-                return result;
-            }
-        };
+public:
+  Ref(T *value) : _value(value){};
 
-        std::string &getClassName() { return _szType; }
+  T *getValue() { return _value; }
 
-        virtual std::string toString() {
-            return fmt::format("[object {}]", getClassName());
-        }
+  ~Ref() override {
+    if (_value) {
+      if (release) {
+        release(_value);
+      } else {
+        delete _value;
+      }
+    }
+  }
 
-        unsigned getId() { return _nId; }
+  static core::Object::Pointer<Ref<T, release>> ref(T *value = new T()) {
+    return new Ref(value);
+  }
+};
 
-        virtual ~Object() { Object::_runtime.erase(_nId); };
-
-        template<class T>
-        static Object::Pointer<T> select(unsigned id) {
-            auto pair = Object::_runtime.find(id);
-            if (pair != Object::_runtime.end()) {
-                return core::Object::Pointer<T>((T *) pair->second);
-            }
-            return core::Object::Pointer<T>(nullptr);
-        }
-    };
-
-    template<class T> using RELEASE = void (*)(T *obj);
-
-    template<class T, RELEASE<T> release = nullptr>
-    class Ref : public Object {
-    private:
-        T *_value;
-
-    public:
-        Ref(T *value) : _value(value) {};
-
-        T *getValue() { return _value; }
-
-        ~Ref() override {
-            if (_value) {
-                if (release) {
-                    release(_value);
-                } else {
-                    delete _value;
-                }
-            }
-        }
-
-        static core::Object::Pointer<Ref<T, release>> ref(T *value = new T()) {
-            return new Ref(value);
-        }
-    };
-
-    std::map<unsigned, Object *> Object::_runtime;
-    template<class T> using Pointer = Object::Pointer<T>;
+std::map<unsigned, Object *> Object::_runtime;
+template <class T> using Pointer = Object::Pointer<T>;
 } // namespace lux::core
 #endif

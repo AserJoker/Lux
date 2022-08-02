@@ -14,30 +14,39 @@
 #include "event/SDLEvent.hpp"
 #include "graphic/Sprite.hpp"
 #include "graphic/TileGroup.hpp"
+#include "system/Graphic.hpp"
+#include "system/interface/IGraphic.hpp"
 
 namespace lux::game {
 class Main : public core::Object,
-             public core::Dependence<system::Application>,
+             public core::Dependence<system::Application, system::IGraphic>,
              public core::EventBus::EventListener<event::RenderEvent>,
              public core::EventBus::EventListener<event::KeyEvent>,
              public core::EventBus::EventListener<event::SDLEvent>,
              public core::EventBus::EventListener<event::MouseButtonEvent> {
 private:
   core::Pointer<graphic::Sprite> _sp;
-  core::Pointer<graphic::Sprite> _container;
+  core::Pointer<graphic::Sprite> _sp2;
 
 public:
   DEFINE_TOKEN(lux::game::Main);
-  Main() : _sp(nullptr), _container(nullptr) {
+  Main() : _sp(nullptr), _sp2(nullptr) {
     _sp = graphic::Sprite::create("player");
-    _container = graphic::Sprite::create(32, 48);
+    _sp2 = graphic::Sprite::create("player2");
+    _sp->getSrcRect().w = 32;
+    _sp->getSrcRect().h = 48;
+    _sp->getDstRect().w = 32;
+    _sp->getDstRect().h = 48;
+    _sp2->getSrcRect().w = 32;
+    _sp2->getSrcRect().h = 48;
+    _sp2->getDstRect().w = 32;
+    _sp2->getDstRect().h = 48;
+    _sp2->getDstRect().x = 32;
   }
 
   void on(event::RenderEvent *) override {
-    _container->begin();
     _sp->render();
-    _container->end();
-    _container->render();
+    _sp2->render();
   }
 
   void on(event::KeyEvent *event) override {}

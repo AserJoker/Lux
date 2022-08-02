@@ -40,14 +40,14 @@ public:
       tileHeight = _pTile->getTileHeight();
       int widthCount = width / tileWidth;
       int heightCount = height / tileHeight;
-      begin();
+      auto old = Sprite::setTarget(this);
       for (int y = 0; y < heightCount; y++) {
         for (int x = 0; x < widthCount; x++) {
           SDL_Rect rc = {x * tileWidth, y * tileHeight, tileWidth, tileHeight};
           _pTile->render(_pData[y * widthCount + x], rc);
         }
       }
-      end();
+      Sprite::setTarget(old);
       _isLock = false;
     }
     return false;
@@ -67,10 +67,10 @@ public:
       return;
     }
     _pData[y * widthCount + x] = value;
-    begin();
+    auto old = Sprite::setTarget(this);
     SDL_Rect rc = {x * tileWidth, y * tileHeight, tileWidth, tileHeight};
     _pTile->render(value, rc);
-    end();
+    Sprite::setTarget(old);
   }
   unsigned getCell(int x, int y) {
     int width, height;

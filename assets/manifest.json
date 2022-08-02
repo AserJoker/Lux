@@ -11,5 +11,6 @@
     "font": {
         "demo": "font/LXGWWenKai-Regular.ttf"
     },
-    "player":"Graphics//Characters//001-Fighter01.png"
+    "player":"Graphics//Characters//001-Fighter01.png",
+    "player2":"Graphics//Characters//002-Fighter02.png"
 }

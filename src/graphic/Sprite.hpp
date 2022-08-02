@@ -1,36 +1,25 @@
 #ifndef _H_LUX_GRAPHIC_SPRITE_
 #define _H_LUX_GRAPHIC_SPRITE_
 
+#include <algorithm>
 #include <any>
 
 #include "Image.hpp"
 #include "SDL_render.h"
+#include "SDL_timer.h"
 #include "core/Dependence.hpp"
 #include "core/Object.hpp"
 #include "resource/Image.hpp"
 #include "system/interface/ICamera.hpp"
 #include "system/interface/IGraphic.hpp"
+#include "util.hpp"
 
 namespace lux::graphic {
 class Sprite : public Image,
                public core::Dependence<system::IGraphic, system::ICamera> {
 private:
-  struct Task {
-    core::Pointer<Sprite> _src;
-    SDL_Rect _target;
-    SDL_Rect _source;
-    SDL_Point _center;
-    double _angle;
-    SDL_RendererFlip _flip;
-  };
-  std::vector<Task> _tasks;
-
-  core::Pointer<Sprite> _stackTarget;
-  static core::Pointer<Sprite> _target;
-
 public:
   DEFINE_TOKEN(lux::graphic::Sprite);
-  Sprite() : _tasks({}), _stackTarget(nullptr) {}
 
   void render() override {
     auto graphic = getDependence<system::IGraphic>();
@@ -43,98 +32,10 @@ public:
       rc.x -= camera_pos.x;
       rc.y -= camera_pos.y;
     }
-    auto target = Sprite::_target;
-    if (target == nullptr) {
-      if (SDL_RenderCopyEx(graphic->getRenderer(), texture, &getSrcRect(), &rc,
-                           getAngle(), &getCenter(), getFlip()) < 0) {
-        throw SDL_ERROR;
-      }
-    } else {
-      auto &tasks = Sprite::_target->_tasks;
-      auto src = getSrcRect();
-      tasks.push_back({this,
-                       {rc.x, rc.y, rc.w, rc.h},
-                       {src.x, src.y, src.w, src.h},
-                       {getCenter().x, getCenter().y},
-                       getAngle(),
-                       getFlip()});
-    }
-  }
-
-  virtual bool setField(const std::string &name, std::any value) {
-    if (name == "x") {
-      getDstRect().x = std::any_cast<int>(value);
-      return true;
-    }
-    if (name == "y") {
-      getDstRect().y = std::any_cast<int>(value);
-      return true;
-    }
-    if (name == "width") {
-      getDstRect().w = std::any_cast<int>(value);
-      return true;
-    }
-    if (name == "height") {
-      getDstRect().h = std::any_cast<int>(value);
-      return true;
-    }
-    if (name == "sourceX") {
-      getSrcRect().x = std::any_cast<int>(value);
-      return true;
-    }
-    if (name == "sourceY") {
-      getSrcRect().y = std::any_cast<int>(value);
-      return true;
-    }
-    if (name == "sourceWidth") {
-      getSrcRect().w = std::any_cast<int>(value);
-      return true;
-    }
-    if (name == "sourceHeight") {
-      getSrcRect().h = std::any_cast<int>(value);
-      return true;
-    }
-    if (name == "centerX") {
-      getCenter().x = std::any_cast<int>(value);
-      return true;
-    }
-    if (name == "centerY") {
-      getCenter().y = std::any_cast<int>(value);
-      return true;
-    }
-    if (name == "angle") {
-      getAngle() = std::any_cast<double>(value);
-      return true;
-    }
-    if (name == "flip") {
-      getFlip() = std::any_cast<SDL_RendererFlip>(value);
-      return true;
-    }
-    if (name == "image") {
-      setImage(resource::Image::create(std::any_cast<std::string>(value)));
-      return true;
-    }
-    return false;
-  }
-  void begin() {
-    _stackTarget = Sprite::_target;
-    Sprite::_target = this;
-  }
-  void end() {
-    auto graphic = INJECT(system::IGraphic);
-    if (SDL_SetRenderTarget(graphic->getRenderer(), getImage()->getTexture()) !=
-        0) {
+    if (SDL_RenderCopyEx(graphic->getRenderer(), texture, &getSrcRect(), &rc,
+                         getAngle(), &getCenter(), getFlip()) < 0) {
       throw SDL_ERROR;
     }
-    for (auto &task : _tasks) {
-      SDL_RenderCopyEx(graphic->getRenderer(),
-                       task._src->getImage()->getTexture(), &task._source,
-                       &task._target, task._angle, &task._center, task._flip);
-    }
-    SDL_SetRenderTarget(graphic->getRenderer(), nullptr);
-    Sprite::_target = _stackTarget;
-    _tasks.clear();
-    _stackTarget = nullptr;
   }
 
   static core::Pointer<Sprite> create(const std::string &token,
@@ -170,8 +71,20 @@ public:
     container->getCenter().y = height / 2;
     return container;
   }
+  static core::Pointer<Sprite> setTarget(core::Pointer<Sprite> target) {
+    static core::Pointer<Sprite> current = nullptr;
+    auto result = current;
+    current = target;
+    auto graphic = INJECT(system::IGraphic);
+    if (SDL_SetRenderTarget(graphic->getRenderer(),
+                            current != nullptr
+                                ? current->getImage()->getTexture()
+                                : nullptr) < 0) {
+      throw SDL_ERROR;
+    }
+    return result;
+  }
 };
-core::Pointer<Sprite> Sprite::_target = nullptr;
 } // namespace lux::graphic
 
 #endif
