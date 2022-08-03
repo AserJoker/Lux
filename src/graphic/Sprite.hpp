@@ -3,12 +3,14 @@
 
 #include <algorithm>
 #include <any>
+#include <stdint.h>
 
 #include "Image.hpp"
 #include "SDL_render.h"
 #include "SDL_timer.h"
 #include "core/Dependence.hpp"
 #include "core/Object.hpp"
+#include "resource/Font.hpp"
 #include "resource/Image.hpp"
 #include "system/interface/ICamera.hpp"
 #include "system/interface/IGraphic.hpp"
@@ -70,6 +72,19 @@ public:
     container->getCenter().x = width / 2;
     container->getCenter().y = height / 2;
     return container;
+  }
+  static core::Pointer<Sprite> create(core::Pointer<resource::Font> font,
+                                      const char *text, uint8_t r, uint8_t g,
+                                      uint8_t b, uint8_t a,
+                                      core::Pointer<Sprite> raw = nullptr) {
+    auto result = INJECT(Sprite);
+    auto img = font->createImage(text, {r, g, b, a});
+    int w, h;
+    img->getSize(&w, &h);
+    result->setImage(img);
+    result->getSrcRect() = {0, 0, w, h};
+    result->getDstRect() = {0, 0, w, h};
+    return result;
   }
   static core::Pointer<Sprite> setTarget(core::Pointer<Sprite> target) {
     static core::Pointer<Sprite> current = nullptr;

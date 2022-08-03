@@ -21,6 +21,7 @@
 #include "event/SDLEvent.hpp"
 #include "graphic/Sprite.hpp"
 #include "graphic/TileGroup.hpp"
+#include "resource/Font.hpp"
 #include "system/Graphic.hpp"
 #include "system/interface/IGraphic.hpp"
 
@@ -35,6 +36,7 @@ class Main
       public core::EventBus::EventListener<event::MainloopEvent> {
 private:
   core::Pointer<Entity> _pEntity;
+  core::Pointer<graphic::Sprite> _pText;
 
 public:
   DEFINE_TOKEN(lux::game::Main);
@@ -48,6 +50,13 @@ public:
   void on(event::RenderEvent *) override {
     getDependence<Background>()->render();
     getDependence<EntityPool>()->render();
+    auto c = _pEntity.cast<Charactor>();
+    _pText = graphic::Sprite::create(
+        resource::Font::create("font::demo", 32),
+        fmt::format("x:{},y:{}", c->getPosition().x, c->getPosition().y)
+            .c_str(),
+        255, 255, 255, 255);
+    _pText->render();
   }
   void on(event::MainloopEvent *) override {
     static int count = 0;
@@ -61,30 +70,30 @@ public:
     auto charactor = _pEntity.cast<Charactor>();
     if (event->getKey() == SDLK_a) {
       if (event->getAction() == event::KeyEvent::KEYDOWN) {
-        charactor->setStepX(-1);
+        charactor->getStep().x = -1;
       } else {
-        charactor->setStepX(0);
+        charactor->getStep().x = 0;
       }
     }
     if (event->getKey() == SDLK_d) {
       if (event->getAction() == event::KeyEvent::KEYDOWN) {
-        charactor->setStepX(1);
+        charactor->getStep().x = 1;
       } else {
-        charactor->setStepX(0);
+        charactor->getStep().x = 0;
       }
     }
     if (event->getKey() == SDLK_w) {
       if (event->getAction() == event::KeyEvent::KEYDOWN) {
-        charactor->setStepY(-1);
+        charactor->getStep().y = -1;
       } else {
-        charactor->setStepY(0);
+        charactor->getStep().y = 0;
       }
     }
     if (event->getKey() == SDLK_s) {
       if (event->getAction() == event::KeyEvent::KEYDOWN) {
-        charactor->setStepY(1);
+        charactor->getStep().y = 1;
       } else {
-        charactor->setStepY(0);
+        charactor->getStep().y = 0;
       }
     }
   }
