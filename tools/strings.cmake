@@ -1,0 +1,6 @@
+macro(ToUpperFirstLetter output input)
+    string(SUBSTRING ${input} 0 1 FIRST_LETTER)
+    string(TOUPPER ${FIRST_LETTER} FIRST_LETTER)
+    string(REGEX REPLACE "^.(.*)" "${FIRST_LETTER}\\1" ${output} "${input}")
+    set(FIRST_LETTER "")
+endmacro()

@@ -1,0 +1,31 @@
+cmake_minimum_required(VERSION 3.12)
+project(Lux)
+include(tools/filesystem.cmake)
+include(tools/strings.cmake)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${PROJECT_SOURCE_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${PROJECT_SOURCE_DIR})
+set(ROOT_PROJECT_NAME Lux)
+include_directories(${PROJECT_SOURCE_DIR}/packages)
+find_package(SDL2 CONFIG REQUIRED)
+find_package(imgui CONFIG REQUIRED)
+find_package(OpenGL REQUIRED)
+find_package(glad CONFIG REQUIRED)
+find_package(fmt CONFIG REQUIRED)
+add_subdirectory(packages)
+add_subdirectory(projects)
+
+ListDirectories(packages ${PROJECT_SOURCE_DIR}/packages)
+ListDirectories(projects ${PROJECT_SOURCE_DIR}/projects)
+
+set(TESTS "")
+list(APPEND TESTS ${packages} ${projects})
+
+enable_testing()
+
+foreach(TEST ${TESTS})
+    ToUpperFirstLetter(TEST ${TEST})
+    add_test(${TEST} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${ROOT_PROJECT_NAME}${TEST}.test)
+endforeach()

@@ -1,0 +1,9 @@
+*.dll
+*.so
+*.exe
+*.pdb
+.vscode
+.cache
+.idea
+build
+Debug
