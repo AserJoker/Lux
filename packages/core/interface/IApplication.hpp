@@ -1,7 +1,7 @@
 #pragma once
 #include "core/include/define.hpp"
 #include "core/interface/IModule.hpp"
-namespace Lux::Runtime {
+namespace Lux::Core {
 interface IApplication {
 public:
   virtual int Initialize(int argc, char *argv[]) = 0;
@@ -9,7 +9,7 @@ public:
   virtual bool isRunning() = 0;
   virtual void Tick() = 0;
 };
-} // namespace Lux::Runtime
+} // namespace Lux::Core
 namespace Lux {
-extern Runtime::IApplication *g_theApp;
+extern Core::IApplication *g_theApp;
 }

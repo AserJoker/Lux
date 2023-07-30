@@ -1,5 +1,5 @@
 #include "../include/Application.hpp"
-using namespace Lux::Runtime;
+using namespace Lux::Core;
 Application::Application() : m_isRunning(false) {}
 Application::~Application() {}
 int Application::Initialize(int argc, char **argv) {

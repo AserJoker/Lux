@@ -1,6 +1,6 @@
 #pragma once
 #include "../interface/IApplication.hpp"
-namespace Lux::Runtime {
+namespace Lux::Core {
 class Application implements IApplication {
 public:
   Application();
@@ -13,4 +13,4 @@ public:
 protected:
   bool m_isRunning;
 };
-} // namespace Lux::Runtime
+} // namespace Lux::Core
