@@ -1,5 +1,10 @@
 #pragma once
-#include "runtime/include/Application_SDL.hpp"
+#include "core/include/Application.hpp"
 namespace Lux::Demo {
-class Application extends Runtime::Application_SDL {};
+class Application extends Core::Application {
+public:
+  Application();
+
+private:
+};
 } // namespace Lux::Demo

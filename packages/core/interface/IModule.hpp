@@ -3,8 +3,10 @@
 namespace Lux::Core {
 interface IModule {
 public:
-  virtual int Initialize() = 0;
-  virtual void Finalize() = 0;
-  virtual void Tick() = 0;
+  virtual void preInitialize() = 0;
+  virtual void initialize() = 0;
+  virtual void postInitialize() = 0;
+  virtual void finalize() = 0;
+  virtual void tick() = 0;
 };
 } // namespace Lux::Core

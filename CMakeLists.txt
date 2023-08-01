@@ -8,6 +8,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${PROJECT_SOURCE_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${PROJECT_SOURCE_DIR})
 set(ROOT_PROJECT_NAME Lux)
+
+include_directories(${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include)
 include_directories(${PROJECT_SOURCE_DIR}/packages)
 ListDirectories(packages ${PROJECT_SOURCE_DIR}/packages)
 ListDirectories(projects ${PROJECT_SOURCE_DIR}/projects)
@@ -18,7 +20,6 @@ find_package(glad CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 add_subdirectory(packages)
 add_subdirectory(projects)
-
 
 set(TESTS "")
 list(APPEND TESTS ${packages} ${projects})

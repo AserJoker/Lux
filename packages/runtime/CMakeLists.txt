@@ -1,27 +1,9 @@
 cmake_minimum_required(VERSION 3.12)
-project(LuxRuntime)
+project(${PACKAGE_NAME})
 aux_source_directory(src ${PROJECT_NAME}-src)
 add_library(${PROJECT_NAME} ${${PROJECT_NAME}-src})
-target_link_libraries(${PROJECT_NAME}
-    PRIVATE
-    $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
-    $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
-)
-target_link_libraries(${PROJECT_NAME} PRIVATE imgui::imgui)
-target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENGL_LIBRARIES})
-target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt)
-target_link_libraries(${PROJECT_NAME} PRIVATE glad::glad)
 
 aux_source_directory(test ${PROJECT_NAME}-test)
 add_executable(${PROJECT_NAME}.test ${${PROJECT_NAME}-test})
 find_package(GTest CONFIG REQUIRED)
 target_link_libraries(${PROJECT_NAME}.test PRIVATE GTest::gtest GTest::gtest_main GTest::gmock GTest::gmock_main)
-target_link_libraries(${PROJECT_NAME}.test
-    PRIVATE
-    $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
-    $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
-)
-target_link_libraries(${PROJECT_NAME}.test PRIVATE imgui::imgui)
-target_link_libraries(${PROJECT_NAME}.test PRIVATE ${OPENGL_LIBRARIES})
-target_link_libraries(${PROJECT_NAME}.test PRIVATE fmt::fmt)
-target_link_libraries(${PROJECT_NAME}.test PRIVATE glad::glad)
