@@ -1,6 +1,7 @@
 #include "../include/Application.hpp"
 #include "util/include/Size.hpp"
 #include "util/include/Strings.hpp"
+#include "util/include/Version.hpp"
 #include <fmt/format.h>
 #include <stdexcept>
 using namespace Lux::Core;
@@ -52,6 +53,7 @@ std::string &Application::config(const std::string &config) {
 void Application::setupConfig() {
   config(CONFIG_NAME_CORE_WINDOW_TITLE) = "Lux";
   config(CONFIG_NAME_CORE_WINDOW_SIZE) = "1024x768b";
+  config(CONFIG_NAME_CORE_OPENGL_VERSION) = "4.6";
 }
 
 void Application::setupSystem() {
@@ -79,6 +81,18 @@ void Application::createWindowAndContext() {
     size.height() = 768;
   }
 
+  Util::Version version;
+  try {
+    version = Util::Strings::to<Util::Version>(
+        config(CONFIG_NAME_CORE_OPENGL_VERSION));
+  } catch (std::exception &e) {
+    fmt::print("failed to read opengl version from config, run opengl with "
+               "default version.\n\tcaused by {}",
+               e.what());
+    version.major() = 4;
+    version.minor() = 6;
+  }
+
   m_window =
       SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED,
                        SDL_WINDOWPOS_CENTERED, size.width(), size.height(),
@@ -88,8 +102,8 @@ void Application::createWindowAndContext() {
         fmt::format("failed to create window '{}'.\n\tcaused by {}", title,
                     SDL_GetError()));
   }
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, version.major());
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, version.minor());
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
   m_glContext = SDL_GL_CreateContext(m_window);
   if (!m_glContext) {

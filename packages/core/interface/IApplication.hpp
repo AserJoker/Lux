@@ -14,6 +14,7 @@ public:
 public:
   static constexpr auto CONFIG_NAME_CORE_WINDOW_TITLE = "core.window.title";
   static constexpr auto CONFIG_NAME_CORE_WINDOW_SIZE = "core.window.size";
+  static constexpr auto CONFIG_NAME_CORE_OPENGL_VERSION = "core.opengl.version";
 };
 } // namespace Lux::Core
 namespace Lux {
